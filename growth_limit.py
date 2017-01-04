@@ -1,5 +1,4 @@
 # 涨停
-import numpy as np
 import pandas as pd
 
 # hist = pd.read_csv('d:/quant/history/day/data/000001.csv')
@@ -21,9 +20,6 @@ preclose.remove(preclose[0])
 preclose.append(preclose[len(preclose) - 1])
 preclose.reverse()
 
-hist['preclose'] = np.array(preclose)
-print(hist)
-
 # 涨幅
-hist['growth'] = (hist['close'] - hist['preclose']) / hist['preclose']
+hist['growth'] = (hist['close'] - preclose) / preclose
 print(hist)
