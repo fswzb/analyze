@@ -1,6 +1,10 @@
+import json
 import time
 
 import requests
+
+# 分钟行情
+'https://xueqiu.com/stock/forchart/stocklist.json?symbol=SH603009&period=1d&one_min=1&_=1483747758603'
 
 headers = {
     # 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -31,8 +35,14 @@ while True:
             time.time() * 1000))
     dom = requests.get(url=url, headers=headers)
 
-    print(url
-          )
-    print(dom.content)
+    print(url)
+    potentions = []
+    r = dom.content.decode('utf-8')
+    r = json.loads(r)
+    for x in r['stocks']:
+        if float(x['percent']) >= 9.99:
+            potentions.append(x)
+    print(potentions)
+    print(len(potentions))
 
     time.sleep(1)
