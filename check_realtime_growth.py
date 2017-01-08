@@ -4,8 +4,11 @@ import time
 import redis
 import requests
 
+_redis = None
+_rise_stops = {}
 
-def get_list(_redis):
+
+def get_list():
     # 分钟行情
     'https://xueqiu.com/stock/forchart/stocklist.json?symbol=SH603009&period=1d&one_min=1&_=1483747758603'
 
@@ -43,12 +46,11 @@ def get_list(_redis):
         r = dom.content.decode('utf-8')
         r = json.loads(r)
         for x in r['stocks']:
-            rise_stop = _redis.get('quant.{}.rise_stop'.format(x['code']))
             if float(x['percent']) >= 9.99:  # 已经涨停的买不进
                 continue
             elif float(x['percent']) < 8.0:  # 没启动不考虑
                 continue
-            elif float(x['open']) == rise_stop:  # 开板不考虑
+            elif float(x['high']) == get_rise_stop(x['code']):  # 开板不考虑
                 continue
             elif x['code'] in []:  # 非一板不入
                 continue
@@ -60,8 +62,19 @@ def get_list(_redis):
         time.sleep(1)
 
 
-if __name__ == '__main__':
-    pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
-    r = redis.Redis(connection_pool=pool)
+def get_rise_stop(code):
+    global _redis, _rise_stops
+    if code in _rise_stops:
+        return _rise_stops[code]
+    else:
+        rise_stop = _redis.get('quant.{}.rise_stop'.format(code))
+        _rise_stops[code] = rise_stop
+        return rise_stop
 
-    get_list(r)
+
+if __name__ == '__main__':
+    global _redis
+    pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
+    _redis = redis.Redis(connection_pool=pool)
+
+    get_list()

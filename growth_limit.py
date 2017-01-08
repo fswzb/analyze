@@ -30,19 +30,44 @@ def statistics():
     hist['growth'] = (hist['close'] - preclose) / preclose
     print(hist)
 
-    hist['limitup'] = np.round(hist['growth'] * 100) / 10
+    hist['rise_stop'] = np.round(hist['growth'] * 100) / 10
     print(hist)
 
     # 涨停跌停次数
-    print((hist['limitup'] == 1).sum())
-    print((hist['limitup'] == -1).sum())
+    print((hist['rise_stop'] == 1).sum())
+    print((hist['rise_stop'] == -1).sum())
 
 
-def get_next_rise_stop(code):
-    hist = pd.read_csv('d:/quant/history/day/data/{}.csv'.format(code))
+def get_next_rise_stop(hist):
     close = list(hist.tail(1)['close'])[0]
     rise_stop = int(round(close * 1.1 * 100)) / 100
     return rise_stop
+
+
+def get_rise_stop_count(hist):
+    size = len(list(hist['close']))
+    if size < 4:
+        return size
+
+    hist = hist.tail(4)
+
+    # 前一天的收盘价
+    preclose = list(hist['close'])
+
+    preclose.reverse()  # 倒置
+    preclose.remove(preclose[0])  # 移除最近一天的
+    preclose.append(preclose[len(preclose) - 1])  # 把第一天的收盘价再次插到第0位，第一天的涨幅就算它是0
+    preclose.reverse()  # d倒置回来
+
+    # 涨幅
+    hist['growth'] = (hist['close'] - preclose) / preclose
+
+    hist = hist.tail(3)
+
+    hist['rise_stop'] = np.round(hist['growth'] * 100) / 10
+
+    # 涨停次数
+    return (hist['rise_stop'] == 1).sum()
 
 
 if __name__ == '__main__':
@@ -56,12 +81,14 @@ if __name__ == '__main__':
     print(lst)
 
     index = 0;
-    batch_count = 100
+    batch_count = 50
     kv = {}
     for x in lst:
         index += 1
         code = x[0:6]
-        kv['quant.{}.rise_stop'.format(code)] = get_next_rise_stop(code)
+        hist = pd.read_csv('d:/quant/history/day/data/{}.csv'.format(code))
+        kv['quant.{}.rise_stop'.format(code)] = get_next_rise_stop(hist)
+        kv['quant.{}.rise_stop_count'.format(code)] = get_rise_stop_count(hist)
 
         if index % batch_count == batch_count - 1:
             r.mset(kv)
