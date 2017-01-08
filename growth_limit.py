@@ -1,33 +1,73 @@
 # 涨停
+import os
+
 import numpy as np
 import pandas as pd
+import redis
 
-# hist = pd.read_csv('d:/quant/history/day/data/000001.csv')
-hist = pd.read_csv('d:/quant/history/day/data/002277.csv')
-print(hist)
 
-# 振幅
-zhenfu = (hist['high'] - hist['low']) / hist['open']
-print(zhenfu)
+def statistics():
+    # hist = pd.read_csv('d:/quant/history/day/data/000001.csv')
+    hist = pd.read_csv('d:/quant/history/day/data/002277.csv')
+    print(hist)
 
-hist['zhenfu'] = zhenfu
-print(hist)
+    # 振幅
+    zhenfu = (hist['high'] - hist['low']) / hist['open']
+    print(zhenfu)
 
-# 前一天的收盘价
-preclose = list(hist['close'])
+    hist['zhenfu'] = zhenfu
+    print(hist)
 
-preclose.reverse()  # 倒置
-preclose.remove(preclose[0])  # 移除最近一天的
-preclose.append(preclose[len(preclose) - 1])  # 把第一天的收盘价再次插到第0位，第一天的涨幅就算它是0
-preclose.reverse()  # d倒置回来
+    # 前一天的收盘价
+    preclose = list(hist['close'])
 
-# 涨幅
-hist['growth'] = (hist['close'] - preclose) / preclose
-print(hist)
+    preclose.reverse()  # 倒置
+    preclose.remove(preclose[0])  # 移除最近一天的
+    preclose.append(preclose[len(preclose) - 1])  # 把第一天的收盘价再次插到第0位，第一天的涨幅就算它是0
+    preclose.reverse()  # d倒置回来
 
-hist['limitup'] = np.round(hist['growth'] * 100) / 10
-print(hist)
+    # 涨幅
+    hist['growth'] = (hist['close'] - preclose) / preclose
+    print(hist)
 
-# 涨停跌停次数
-print((hist['limitup'] == 1).sum())
-print((hist['limitup'] == -1).sum())
+    hist['limitup'] = np.round(hist['growth'] * 100) / 10
+    print(hist)
+
+    # 涨停跌停次数
+    print((hist['limitup'] == 1).sum())
+    print((hist['limitup'] == -1).sum())
+
+
+def get_next_rise_stop(code):
+    hist = pd.read_csv('d:/quant/history/day/data/{}.csv'.format(code))
+    close = list(hist.tail(1)['close'])[0]
+    rise_stop = int(round(close * 1.1 * 100)) / 100
+    return rise_stop
+
+
+if __name__ == '__main__':
+    pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
+    r = redis.Redis(connection_pool=pool)
+
+    r.set('name', 'marz')
+    print(r.get('name').decode('utf-8'))
+
+    lst = os.listdir(u'D:\quant\history\day\data')
+    print(lst)
+
+    index = 0;
+    batch_count = 100
+    kv = {}
+    for x in lst:
+        index += 1
+        code = x[0:6]
+        kv['quant.{}.rise_stop'.format(code)] = get_next_rise_stop(code)
+
+        if index % batch_count == batch_count - 1:
+            r.mset(kv)
+            print(kv)
+            kv = {}
+
+    r.mset(kv)
+    print(kv)
+    kv = {}
