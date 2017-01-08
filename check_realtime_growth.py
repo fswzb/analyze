@@ -6,6 +6,7 @@ import requests
 
 _redis = None
 _rise_stops = {}
+_rise_stop_counts = {}
 
 
 def get_list():
@@ -52,6 +53,8 @@ def get_list():
                 continue
             elif float(x['high']) == get_rise_stop(x['code']):  # 开板不考虑
                 continue
+            elif get_rise_stop_count(x['code']) > 0:  # 三日内板过不考虑
+                continue
             elif x['code'] in []:  # 非一板不入
                 continue
 
@@ -70,6 +73,18 @@ def get_rise_stop(code):
         rise_stop = _redis.get('quant.{}.rise_stop'.format(code))
         _rise_stops[code] = rise_stop
         return rise_stop
+
+
+def get_rise_stop_count(code):
+    global _redis, _rise_stop_counts
+    if code in _rise_stop_counts:
+        r = _rise_stop_counts[code]
+    else:
+        r = _redis.get('quant.{}.rise_stop_count'.format(code))
+        r = 1 if r is None else int(r)
+        _rise_stop_counts[code] = r
+
+    return int(r)
 
 
 if __name__ == '__main__':
