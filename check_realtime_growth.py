@@ -71,6 +71,7 @@ def get_rise_stop(code):
         return _rise_stops[code]
     else:
         rise_stop = _redis.get('quant.{}.rise_stop'.format(code))
+        rise_stop = 0 if rise_stop is None else float(rise_stop)
         _rise_stops[code] = rise_stop
         return rise_stop
 
