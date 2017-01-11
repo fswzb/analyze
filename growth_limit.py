@@ -38,9 +38,13 @@ def statistics():
     print((hist['rise_stop'] == -1).sum())
 
 
+def round_to_cent(price):
+    return int(round(price * 100)) / 100
+
+
 def get_next_rise_stop(hist):
     close = list(hist.tail(1)['close'])[0]
-    rise_stop = int(round(close * 1.1 * 100)) / 100
+    rise_stop = round_to_cent(round_to_cent(close) * 1.1)
     return rise_stop
 
 

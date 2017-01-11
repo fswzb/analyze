@@ -13,9 +13,8 @@ def get_new_stock_list():
 
         # if hist.tail(1)['date'] > '2015/1/12':
         head = hist.head(1)
-        heads = hist.head(50)
-        if list(head['date'])[0] > '2015-01-12':
-            print(code, head['date'])
+        if list(head['date'])[0] < '2015-01-12':
+            continue
 
 
 if __name__ == '__main__':
