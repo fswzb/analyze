@@ -47,11 +47,11 @@ def get_list():
         r = dom.content.decode('utf-8')
         r = json.loads(r)
         for x in r['stocks']:
-            if float(x['percent']) >= 9.99:  # 已经涨停的买不进
+            if float(x['percent']) < 8.0:  # 没启动不考虑
                 continue
-            elif float(x['percent']) < 8.0:  # 没启动不考虑
-                continue
-            elif float(x['high']) == get_rise_stop(x['code']) or 0 == get_rise_stop(x['code']):  # 新股或开板股不考虑
+            # elif float(x['percent']) >= 9.99:  # 已经涨停的买不进
+            #     continue
+            elif float(x['high']) >= get_rise_stop(x['code']) or 0 == get_rise_stop(x['code']):  # 新股或开板股不考虑
                 continue
             # elif get_rise_stop_count(x['code']) > 0:  # 三日内板过不考虑
             #     continue
