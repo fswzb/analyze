@@ -55,7 +55,9 @@ def get_list():
                 continue
             # elif get_rise_stop_count(x['code']) > 0:  # 三日内板过不考虑
             #     continue
-            elif False:  # 成交量太大的不考虑
+            elif False:  # todo 成交量太大的不考虑
+                continue
+            elif False:  # todo 非龙头不考虑，不是龙头很有可能最高回落
                 continue
 
             potentions.append(x)
