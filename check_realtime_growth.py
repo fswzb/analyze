@@ -55,6 +55,8 @@ def get_list():
                 continue
             # elif get_rise_stop_count(x['code']) > 0:  # 三日内板过不考虑
             #     continue
+            elif False:  # 成交量太大的不考虑
+                continue
 
             potentions.append(x)
             print('{}, percent: {}, current: {}, rise stop: {}'.format(x['name'], x['percent'], x['current'],
