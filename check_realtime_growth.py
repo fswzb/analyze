@@ -51,10 +51,10 @@ def get_list():
                 continue
             elif float(x['percent']) < 8.0:  # 没启动不考虑
                 continue
-            elif float(x['high']) == get_rise_stop(x['code']) or 0 == get_rise_stop(x['code']):  # 开板不考虑
+            elif float(x['high']) == get_rise_stop(x['code']) or 0 == get_rise_stop(x['code']):  # 新股或开板股不考虑
                 continue
-            elif get_rise_stop_count(x['code']) > 0:  # 三日内板过不考虑
-                continue
+            # elif get_rise_stop_count(x['code']) > 0:  # 三日内板过不考虑
+            #     continue
 
             potentions.append(x)
             print('{}, percent: {}, current: {}, rise stop: {}'.format(x['name'], x['percent'], x['current'],
