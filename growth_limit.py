@@ -4,6 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 import redis
+import tushare as ts
 
 
 def statistics():
@@ -40,6 +41,11 @@ def statistics():
 
 def round_to_cent(price):
     return int(round(price * 100)) / 100
+
+
+def set_rise_stop():
+    hist = ts.get_hist_data()
+    hist['rise_stop'] = np.int(hist['close'])
 
 
 def get_next_rise_stop(hist):
