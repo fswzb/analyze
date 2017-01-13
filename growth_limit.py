@@ -1,4 +1,5 @@
 # 涨停
+import datetime
 import os
 
 import numpy as np
@@ -39,10 +40,6 @@ def statistics():
     print((hist['rise_stop'] == -1).sum())
 
 
-def round_to_cent(price):
-    return int(round(price * 100)) / 100
-
-
 def set_rise_stop():
     hist = ts.get_hist_data()
     hist['rise_stop'] = np.int(hist['close'])
@@ -50,12 +47,12 @@ def set_rise_stop():
 
 def get_next_rise_stop(hist):
     close = list(hist.tail(1)['close'])[0]
-    rise_stop = round_to_cent(round_to_cent(close) * 1.1)
+    rise_stop = round(close * 1.1, ndigits=2)
     return rise_stop
 
 
 def get_rise_stop_count(hist):
-    size = len(list(hist['close']))
+    size = len(hist)
     if size < 4:
         return size
 
@@ -81,22 +78,28 @@ def get_rise_stop_count(hist):
 
 
 if __name__ == '__main__':
+    s = datetime.datetime.now()
+
     pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
     r = redis.Redis(connection_pool=pool)
 
     r.set('name', 'marz')
     print(r.get('name').decode('utf-8'))
 
-    lst = os.listdir(u'D:\quant\history\day\data')
-    print(lst)
-
-    index = 0;
+    index = 0
     batch_count = 50
     kv = {}
-    for x in lst:
+
+    basics = ts.get_stock_basics()
+    for code in basics.index:
         index += 1
-        code = x[0:6]
-        hist = pd.read_csv('d:/quant/history/day/data/{}.csv'.format(code))
+
+        hist = ts.get_k_data(code)
+        if 'close' not in hist.keys():
+            continue
+        if len(hist) == 0:
+            continue
+
         kv['quant.{}.rise_stop'.format(code)] = get_next_rise_stop(hist)
         kv['quant.{}.rise_stop_count'.format(code)] = get_rise_stop_count(hist)
 
@@ -108,3 +111,23 @@ if __name__ == '__main__':
     r.mset(kv)
     print(kv)
     kv = {}
+
+    # lst = os.listdir(u'D:\quant\history\day\data')
+    # print(lst)
+    # for x in lst:
+    #     index += 1
+    #     code = x[0:6]
+    #     hist = pd.read_csv('d:/quant/history/day/data/{}.csv'.format(code))
+    #     kv['quant.{}.rise_stop'.format(code)] = get_next_rise_stop(hist)
+    #     kv['quant.{}.rise_stop_count'.format(code)] = get_rise_stop_count(hist)
+    #
+    #     if index % batch_count == batch_count - 1:
+    #         r.mset(kv)
+    #         print(kv)
+    #         kv = {}
+    #
+    # r.mset(kv)
+    # print(kv)
+    # kv = {}
+
+    print(datetime.datetime.now() - s)
