@@ -1,11 +1,24 @@
 # 涨停
 import datetime
-import os
+from multiprocessing.pool import ThreadPool
 
 import numpy as np
 import pandas as pd
 import redis
+
 import tushare as ts
+
+
+def last_full_day():
+    today = datetime.datetime.today()
+
+    if today.hour < 16:
+        t = datetime.datetime.now() - datetime.timedelta(days=1)
+        day = t.date()
+    else:
+        day = today.date()
+
+    return str(day)
 
 
 def statistics():
@@ -77,57 +90,37 @@ def get_rise_stop_count(hist):
     return (hist['rise_stop'] == 1).sum()
 
 
+def update_info(code):
+    global end
+    hist = ts.get_k_data(code, start='2015-01-01', end=end)
+
+    if 'close' not in hist.keys():
+        return
+    if len(hist) == 0:
+        return
+
+    kv = {'quant.{}.rise_stop'.format(code): get_next_rise_stop(hist),
+          'quant.{}.rise_stop_count'.format(code): get_rise_stop_count(hist)}
+
+    r = redis.Redis(connection_pool=redis_pool)
+    r.mset(kv)
+
+
+redis_pool = None
+end = last_full_day()
+
 if __name__ == '__main__':
     s = datetime.datetime.now()
 
-    pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
-    r = redis.Redis(connection_pool=pool)
+    global redis_pool
+    redis_pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
+    r = redis.Redis(connection_pool=redis_pool)
 
     r.set('name', 'marz')
     print(r.get('name').decode('utf-8'))
 
-    index = 0
-    batch_count = 50
-    kv = {}
-
     basics = ts.get_stock_basics()
-    for code in basics.index:
-        index += 1
-
-        hist = ts.get_k_data(code)
-        if 'close' not in hist.keys():
-            continue
-        if len(hist) == 0:
-            continue
-
-        kv['quant.{}.rise_stop'.format(code)] = get_next_rise_stop(hist)
-        kv['quant.{}.rise_stop_count'.format(code)] = get_rise_stop_count(hist)
-
-        if index % batch_count == batch_count - 1:
-            r.mset(kv)
-            print(kv)
-            kv = {}
-
-    r.mset(kv)
-    print(kv)
-    kv = {}
-
-    # lst = os.listdir(u'D:\quant\history\day\data')
-    # print(lst)
-    # for x in lst:
-    #     index += 1
-    #     code = x[0:6]
-    #     hist = pd.read_csv('d:/quant/history/day/data/{}.csv'.format(code))
-    #     kv['quant.{}.rise_stop'.format(code)] = get_next_rise_stop(hist)
-    #     kv['quant.{}.rise_stop_count'.format(code)] = get_rise_stop_count(hist)
-    #
-    #     if index % batch_count == batch_count - 1:
-    #         r.mset(kv)
-    #         print(kv)
-    #         kv = {}
-    #
-    # r.mset(kv)
-    # print(kv)
-    # kv = {}
+    tp = ThreadPool()
+    tp.map(update_info, basics.index)
 
     print(datetime.datetime.now() - s)
