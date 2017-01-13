@@ -1,4 +1,4 @@
-# 新股开板
+# 新股开板战法
 import datetime
 
 import numpy as np
