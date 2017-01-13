@@ -47,7 +47,9 @@ def get_list():
         r = dom.content.decode('utf-8')
         r = json.loads(r)
         for x in r['stocks']:
-            if float(x['percent']) < 8.0:  # 没启动不考虑
+            if float(x['name'].startswith('N')):  # 新股不考虑
+                continue
+            elif float(x['percent']) < 8.0:  # 没启动不考虑
                 continue
             # elif float(x['percent']) >= 9.99:  # 已经涨停的买不进
             #     continue
