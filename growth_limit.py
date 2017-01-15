@@ -110,9 +110,10 @@ redis_pool = None
 end = last_full_day()
 
 if __name__ == '__main__':
+    global redis_pool
+
     s = datetime.datetime.now()
 
-    global redis_pool
     redis_pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
     r = redis.Redis(connection_pool=redis_pool)
 
