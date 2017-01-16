@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     basics = ts.get_stock_basics()
     for code in basics.index:
-        hist = ts.get_h_data(code)
+        hist = ts.get_hist_data(code)
         explore_growth_form(hist)
 
     print(datetime.datetime.now() - s)
