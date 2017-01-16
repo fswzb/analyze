@@ -9,7 +9,7 @@ _rise_stops = {}
 _rise_stop_counts = {}
 
 
-def get_list():
+def list_it():
     # 分钟行情
     'https://xueqiu.com/stock/forchart/stocklist.json?symbol=SH603009&period=1d&one_min=1&_=1483747758603'
 
@@ -40,7 +40,12 @@ def get_list():
         url = 'https://xueqiu.com/stock/cata/stocklist.json?page=1&size=60&order=desc&orderby=percent&type=11,12&_={}'.format(
             int(
                 time.time() * 1000))
-        dom = requests.get(url=url, headers=headers)
+
+        try:
+            dom = requests.get(url=url, headers=headers)
+        except Exception as e:
+            print(e)
+            continue
 
         print(url)
         potentions = []
@@ -99,4 +104,4 @@ if __name__ == '__main__':
     pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
     _redis = redis.Redis(connection_pool=pool)
 
-    get_list()
+    list_it()
