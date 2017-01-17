@@ -3,11 +3,12 @@ import threading
 from multiprocessing.pool import ThreadPool
 
 import numpy as np
+
 import tushare as ts
 
 
 def explore_second_rise(index):
-    global start, end, p, mu
+    global start, end, p, mu, sh
 
     hist = ts.get_hist_data(index, start=start, end=end)
 
@@ -34,9 +35,19 @@ def explore_second_rise(index):
         if hist['high'][i - 1] == hist['low'][i - 1]:  # 第三天不能是一字板
             continue
 
+        # TODO 检查是否放量
+
+        # mssh0 = sh.get_value(hist.index[i - 3], 'ma5')
+        # mssh1 = sh.get_value(hist.index[i - 2], 'ma5')
+        # if mssh0 >= mssh1:  # 大盘上行
+        #     continue
+
         # if ma5[i - 1] > ma10[i - 1] > ma20[i - 1]:
         #     if ma5[i - 0] > ma10[i - 0] > ma20[i - 0]:
         #         if ma5[i - 1] > ma5[i - 0] and ma10[i - 1] > ma10[i - 0] and ma20[i - 1] > ma20[i - 0]:
+
+        # if ma10[i - 3] >= ma10[i - 2]:  # 个股上行
+        #     continue
 
         mu.acquire()
         p.append(pChange[i])
@@ -50,10 +61,12 @@ end = None
 p = []
 mu = threading.Lock()
 
+sh = None
+
 if __name__ == '__main__':
     s = datetime.datetime.now()
 
-    global start, end, p
+    global start, end, p, sh
 
     t = datetime.datetime.now() - datetime.timedelta(days=365 * 1 / 2)
     day = t.date()
@@ -62,6 +75,8 @@ if __name__ == '__main__':
     t = datetime.datetime.now() - datetime.timedelta(days=0 + 0)
     day = t.date()
     end = str(day)
+
+    sh = ts.get_hist_data('sh')
 
     basics = ts.get_stock_basics()
     pool = ThreadPool()
