@@ -21,11 +21,13 @@ def is_growth_form(hist):
 
 def is_first_negative(hist):
     '''跌幅达到10%~15%'''
+    # todo 跌幅达到10%~15%
     pass
 
 
 def is_block_head(hist):
     '''是否是板块龙头'''
+    # todo 龙头股检测
     pass
 
 
