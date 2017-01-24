@@ -22,7 +22,7 @@ def is_growth_form(hist):
 def is_first_negative(hist):
     '''
     跌幅达到10%~15%
-    西部建设、太阳电缆、新亚制程、利君股份
+    西部建设、太阳电缆、新亚制程、利君股份、同力水泥
     '''
     # todo 跌幅达到10%~15%
     pass
