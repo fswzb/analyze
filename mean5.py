@@ -5,6 +5,8 @@ from multiprocessing.pool import ThreadPool
 import numpy as np
 import tushare as ts
 
+'''收在五日均线下出局'''
+
 
 def explore_second_rise(index):
     global start, end, p, mu, sh

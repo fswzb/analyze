@@ -10,6 +10,7 @@ print(df['p_change'].describe())
 
 from pylab import *
 
+
 def showTimeLine(df):
     # 按时间顺序展示涨幅
     n = len(df.index)
@@ -20,6 +21,7 @@ def showTimeLine(df):
 
     ylim(-10, +10)
     show()
+
 
 def showRateCount(df):
     # 统计涨幅分布
@@ -48,5 +50,6 @@ def showRateCount(df):
     bar(X, Y, facecolor='#9999ff', edgecolor='white')
 
     show()
+
 
 showRateCount(df)
