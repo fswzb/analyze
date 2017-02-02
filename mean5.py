@@ -29,30 +29,32 @@ def explore_second_rise(index):
     ma20 = hist['ma20']
 
     for i in range(2, _len):
-        if pChange[i - 3] > 9.5:  # 第一天涨停，则第三天不是二板
+        if pChange[i - 3] > 9.5:  # 第一天不能涨停，否则第三天不是二板
             continue
         if pChange[i - 2] <= 9.5 or pChange[i - 1] <= 9.5:  # 第二天第三天得是板
             continue
         if hist['high'][i - 1] == hist['low'][i - 1]:  # 第三天不能是一字板
             continue
 
-        # TODO 检查是否放量
+        buy_price = hist['open'][i - 1]
+        sell_price = hist['close'][i]
 
-        # mssh0 = sh.get_value(hist.index[i - 3], 'ma5')
-        # mssh1 = sh.get_value(hist.index[i - 2], 'ma5')
-        # if mssh0 >= mssh1:  # 大盘上行
-        #     continue
+        offset = 0
+        while True:
+            if i + offset >= _len:
+                break
 
-        # if ma5[i - 1] > ma10[i - 1] > ma20[i - 1]:
-        #     if ma5[i - 0] > ma10[i - 0] > ma20[i - 0]:
-        #         if ma5[i - 1] > ma5[i - 0] and ma10[i - 1] > ma10[i - 0] and ma20[i - 1] > ma20[i - 0]:
+            sell_price = hist['close'][i + offset]
 
-        # if ma10[i - 3] >= ma10[i - 2]:  # 个股上行
-        #     continue
+            if hist['close'][i + offset] < hist['ma5'][i + offset]:
+                offset += 1
+                break
+
+            offset += 1
 
         mu.acquire()
-        p.append(pChange[i])
-        # p.append((hist['open'][i] - hist['close'][i - 1]) / hist['close'][i - 1] * 100)
+        # p.append((sell_price - buy_price) / buy_price / offset * 100)
+        p.append((sell_price - buy_price) / buy_price * 100)
         mu.release()
 
 
