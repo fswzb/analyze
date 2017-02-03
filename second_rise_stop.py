@@ -4,12 +4,11 @@ import threading
 from multiprocessing.pool import ThreadPool
 
 import numpy as np
-
 import tushare as ts
 
 
 def explore_second_rise(index):
-    global start, end, p, mu, sh
+    global start, end, p_change_array, mu, sh
 
     hist = ts.get_hist_data(index, start=start, end=end)
 
@@ -17,7 +16,7 @@ def explore_second_rise(index):
         return
 
     _len = len(hist)
-    if _len < 4:  # 第一天用来计算第三天是否是二板，第四天计算收益
+    if _len < 5:  # 第一天用来计算第三天是否是二板，第四天计算收益
         return
 
     hist = hist.iloc[::-1]
@@ -51,15 +50,22 @@ def explore_second_rise(index):
         #     continue
 
         mu.acquire()
-        p.append(pChange[i])
+        p_change_array.append(pChange[i])
         # p.append((hist['open'][i] - hist['close'][i - 1]) / hist['close'][i - 1] * 100)
         mu.release()
+
+        # date = hist.index[i]
+        # k = ts.get_hist_data(index, ktype='30')
+        # filter = k.index.str.contains(date)
+        # k = k[filter]
+        # print(k)
 
 
 start = None
 end = None
 
-p = []
+p_change_array = []
+t_array = []
 mu = threading.Lock()
 
 sh = None
@@ -67,7 +73,7 @@ sh = None
 if __name__ == '__main__':
     s = datetime.datetime.now()
 
-    global start, end, p, sh
+    global start, end, p_change_array, sh
 
     t = datetime.datetime.now() - datetime.timedelta(days=365 * 1 / 1)
     day = t.date()
@@ -83,10 +89,10 @@ if __name__ == '__main__':
     pool = ThreadPool()
     pool.map(explore_second_rise, basics.index)
 
-    print(p)
-    print('len', len(p))
+    print(p_change_array)
+    print('len', len(p_change_array))
 
-    n = np.array(p)
+    n = np.array(p_change_array)
     print((n > 0).sum())
     print((n <= 0).sum())
     print(n.mean())

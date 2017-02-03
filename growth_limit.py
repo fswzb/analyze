@@ -5,7 +5,6 @@ from multiprocessing.pool import ThreadPool
 import numpy as np
 import pandas as pd
 import redis
-
 import tushare as ts
 
 
