@@ -1,11 +1,11 @@
+'''收在五日均线下出局'''
 import datetime
 import threading
 from multiprocessing.pool import ThreadPool
 
 import numpy as np
-import tushare as ts
 
-'''收在五日均线下出局'''
+import tushare as ts
 
 
 def explore_second_rise(index):

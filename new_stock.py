@@ -1,7 +1,8 @@
-# 新股开板战法
+'''新股开板战法'''
 import datetime
 
 import numpy as np
+
 import tushare as ts
 
 

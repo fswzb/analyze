@@ -1,4 +1,4 @@
-# 首阴战法
+'''首阴战法'''
 import datetime
 
 import tushare as ts

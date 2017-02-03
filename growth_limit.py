@@ -1,10 +1,11 @@
-# 涨停
+'''计算次日涨停价'''
 import datetime
 from multiprocessing.pool import ThreadPool
 
 import numpy as np
 import pandas as pd
 import redis
+
 import tushare as ts
 
 
