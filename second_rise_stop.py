@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     global start, end, p, sh
 
-    t = datetime.datetime.now() - datetime.timedelta(days=365 * 1 / 2)
+    t = datetime.datetime.now() - datetime.timedelta(days=365 * 1 / 1)
     day = t.date()
     start = str(day)
 
