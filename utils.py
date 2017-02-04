@@ -1,3 +1,5 @@
+from multiprocessing.pool import ThreadPool
+
 import pandas as pd
 
 import tushare as ts
@@ -9,8 +11,12 @@ def get_k_data(code, date, ktype):
     df = ts.get_tick_data(code, date=date)
     # print(df)
 
-    df['time'] = date + ' ' + df['time']
-    df['time'] = pd.to_datetime(df['time'])
+    try:
+        df['time'] = date + ' ' + df['time']
+        df['time'] = pd.to_datetime(df['time'])
+    except Exception as e:
+        print(code, df['time'])
+        return None
 
     df = df.set_index('time')
     # print(df)
@@ -30,8 +36,12 @@ def get_k_data(code, date, ktype):
     amount_df = pd.DataFrame(amounts, columns=['amount'])
 
     # 合并df
-    min_df = price_df.merge(vol_df, left_index=True, right_index=True).merge(amount_df, left_index=True,
-                                                                             right_index=True)
+    try:
+        min_df = price_df.merge(vol_df, left_index=True, right_index=True).merge(amount_df, left_index=True,
+                                                                                 right_index=True)
+    except Exception as e:
+        print(code, price_df, vol_df, amount_df)
+        return None
     # print(min_df)
 
     # 合成指定k线
@@ -47,8 +57,15 @@ def get_k_data(code, date, ktype):
     return r_df
 
 
-if __name__ == '__main__':
-    for i in range(3000):
-        df = get_k_data('600000', date='2010-12-13', ktype='30')
+def get_high_time(index):
+    df = get_k_data(index, date='2017-02-03', ktype='30')
+    if df is not None:
         max = df['high'].max()
-        print(df[df['high'] == max].index[0])
+        # print(df[df['high'] == max].index[0])
+        print(df[df['high'] == max].head(1))
+
+
+if __name__ == '__main__':
+    basics = ts.get_stock_basics()
+    td = ThreadPool()
+    td.map(get_high_time, basics.index)
