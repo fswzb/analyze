@@ -4,7 +4,9 @@ import threading
 from multiprocessing.pool import ThreadPool
 
 import numpy as np
+
 import tushare as ts
+from utils import get_k_data
 
 
 def explore_second_rise(index):
@@ -16,7 +18,7 @@ def explore_second_rise(index):
         return
 
     _len = len(hist)
-    if _len < 5:  # 第一天用来计算第三天是否是二板，第四天计算收益
+    if _len < 4:  # 第一天用来计算第三天是否是二板，第四天计算收益
         return
 
     hist = hist.iloc[::-1]
@@ -54,18 +56,24 @@ def explore_second_rise(index):
         # p.append((hist['open'][i] - hist['close'][i - 1]) / hist['close'][i - 1] * 100)
         mu.release()
 
-        # date = hist.index[i]
-        # k = ts.get_hist_data(index, ktype='30')
-        # filter = k.index.str.contains(date)
-        # k = k[filter]
-        # print(k)
+        df = get_k_data(index, hist.index[i], '30')
+        max = df['high'].max()
+        dt = str(df[df['high'] == max].index[0])
+        dt = dt[len(dt) - 8:]
+
+        mu.acquire()
+        if dt in t_dict:
+            t_dict[dt] += 1
+        else:
+            t_dict[dt] = 1
+        mu.release()
 
 
 start = None
 end = None
 
 p_change_array = []
-t_array = []
+t_dict = {}
 mu = threading.Lock()
 
 sh = None
@@ -96,6 +104,8 @@ if __name__ == '__main__':
     print((n > 0).sum())
     print((n <= 0).sum())
     print(n.mean())
+
+    print('t_dict', t_dict)
 
     print('end')
 
