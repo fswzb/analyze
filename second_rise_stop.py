@@ -1,4 +1,4 @@
-'''二板'''
+"""二板"""
 import datetime
 import threading
 from multiprocessing.pool import ThreadPool
@@ -69,15 +69,22 @@ def get_high_time(index):
     max = df['high'].max()
 
     mu.acquire()
-    dt = df[df['high'] == max].index
-    for i in dt:
+    dt = df[df['high'] == max]
+    for i, row in dt.iterrows():
         key = str(i)
         key = key[len(key) - 8:]
-        if key in t_dict:
-            t_dict[key] += 1
+        if key in time_dict:
+            time_dict[key] += 1
         else:
-            t_dict[key] = 1
+            time_dict[key] = 1
     mu.release()
+
+
+def draw_chart(df):
+    import seaborn as sns
+    sns.set(style="white")
+    sns.pointplot(df.index, df['count'])
+    sns.plt.show()
 
 
 start = None
@@ -85,7 +92,7 @@ end = None
 
 p_change_array = []
 code_date = {}
-t_dict = {}
+time_dict = {}
 mu = threading.Lock()
 
 sh = None
@@ -120,9 +127,10 @@ if __name__ == '__main__':
     pool = ThreadPool()
     pool.map(get_high_time, basics.index)
 
-    print('t_dict', t_dict)
-    df = pd.DataFrame({'time': list(t_dict.keys()), 'count': list(t_dict.values())})
+    print('t_dict', time_dict)
+    df = pd.DataFrame({'time': list(time_dict.keys()), 'count': list(time_dict.values())})
     df = df.sort_values('count')
+    df = df.reset_index()
     print(df)
 
     '''   count      time
@@ -191,7 +199,10 @@ if __name__ == '__main__':
     48    156  09:30:00'''
 
     df = df.sort_values('time')
+    df = df.reset_index()
     print(df)
+
+    draw_chart(df)
 
     '''    count      time
     30     78  09:25:00

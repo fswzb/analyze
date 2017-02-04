@@ -1,4 +1,4 @@
-'''新股开板战法'''
+"""新股开板战法"""
 import datetime
 
 import numpy as np
@@ -7,7 +7,7 @@ import tushare as ts
 
 
 def get_new_stock_list():
-    '''
+    """
     第二天的收盘价 - 第一天的最高价
     开板新股数 167
     上涨数 45
@@ -42,7 +42,7 @@ def get_new_stock_list():
     下跌数 103
     上涨概率: 38.32%
     平均收益率: -0.99%
-    '''
+    """
 
     basics = ts.get_stock_basics()
     _filter = [row > 20160612 for row in basics['timeToMarket']]

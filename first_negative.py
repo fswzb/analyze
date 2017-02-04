@@ -1,11 +1,11 @@
-'''首阴战法'''
+"""首阴战法"""
 import datetime
 
 import tushare as ts
 
 
 def is_growth_form(hist):
-    '''多头排列'''
+    """多头排列"""
     if len(hist) < 2:
         return False
 
@@ -20,16 +20,16 @@ def is_growth_form(hist):
 
 
 def is_first_negative(hist):
-    '''
+    """
     跌幅达到10%~15%
     西部建设、太阳电缆、新亚制程、利君股份、同力水泥
-    '''
+    """
     # todo 跌幅达到10%~15%
     pass
 
 
 def is_block_head(hist):
-    '''是否是板块龙头'''
+    """是否是板块龙头"""
     # todo 龙头股检测
     pass
 

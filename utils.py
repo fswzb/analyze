@@ -6,7 +6,7 @@ import tushare as ts
 
 
 def get_k_data(code, date, ktype):
-    '''获取任意分钟k线'''
+    """获取任意分钟k线"""
 
     df = ts.get_tick_data(code, date=date)
     # print(df)

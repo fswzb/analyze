@@ -1,4 +1,4 @@
-'''收在五日均线下出局'''
+"""收在五日均线下出局"""
 import datetime
 import threading
 from multiprocessing.pool import ThreadPool

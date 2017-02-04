@@ -1,4 +1,4 @@
-'''选择当前可打的板'''
+"""选择当前可打的板"""
 import json
 import time
 

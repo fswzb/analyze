@@ -1,4 +1,4 @@
-'''计算次日涨停价'''
+"""计算次日涨停价"""
 import datetime
 from multiprocessing.pool import ThreadPool
 

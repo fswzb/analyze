@@ -1,4 +1,4 @@
-'''高质量板复盘'''
+"""高质量板复盘"""
 import json
 import time
 
