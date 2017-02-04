@@ -9,7 +9,7 @@ import tushare as ts
 
 
 def explore_second_rise(index):
-    global start, end, p_change_array, mu, sh
+    global start, end, p_change_array, mu
 
     hist = ts.get_hist_data(index, start=start, end=end)
 
@@ -54,7 +54,7 @@ def explore_second_rise(index):
 
         mu.acquire()
         # p.append((sell_price - buy_price) / buy_price / offset * 100)
-        p.append((sell_price - buy_price) / buy_price * 100)
+        p_change_array.append((sell_price - buy_price) / buy_price * 100)
         mu.release()
 
 
@@ -64,12 +64,10 @@ end = None
 p_change_array = []
 mu = threading.Lock()
 
-sh = None
-
 if __name__ == '__main__':
     s = datetime.datetime.now()
 
-    global start, end, p_change_array, sh
+    global start, end, p_change_array
 
     t = datetime.datetime.now() - datetime.timedelta(days=365 * 1 / 2)
     day = t.date()
@@ -78,8 +76,6 @@ if __name__ == '__main__':
     t = datetime.datetime.now() - datetime.timedelta(days=0 + 0)
     day = t.date()
     end = str(day)
-
-    sh = ts.get_hist_data('sh')
 
     basics = ts.get_stock_basics()
     pool = ThreadPool()

@@ -12,15 +12,15 @@ from utils import get_k_data
 
 
 def explore_second_rise(index):
-    global start, end, p_change_array, mu, sh
+    global start, end, p_change_array, mu
 
-    hist = ts.get_hist_data(index, start=start, end=end)
+    hist = ts.get_h_data(index, start=start, end=end)
 
     if hist is None:
         return
 
     _len = len(hist)
-    if _len < 4:  # 第一天用来计算第三天是否是二板，第四天计算收益
+    if _len < 5:  # 第一天用来计算第三天是否是二板，第四天计算收益
         return
 
     hist = hist.iloc[::-1]
@@ -31,22 +31,41 @@ def explore_second_rise(index):
     ma10 = hist['ma10']
     ma20 = hist['ma20']
 
-    for i in range(2, _len):
+    for i in range(2, _len):  # 去掉次新股时期
         # 二板策略
+        # 因为第一天要求不是涨停，所以肯定避开了次新股时期
         if pChange[i - 3] > 9.5:  # 第一天涨停，则第三天不是二板
             continue
         if pChange[i - 2] <= 9.5 or pChange[i - 1] <= 9.5:  # 第二天第三天得是板
             continue
         if hist['high'][i - 1] == hist['low'][i - 1]:  # 第三天不能是一字板
             continue
+        if i >= _len - 1 - 1:
+            continue
 
         # TODO 检查是否放量
 
         # 板后低开策略
-        if pChange[i - 2] <= 9.5:  # 板
-            continue
-        if hist['open'][i - 1] >= hist['close'][i - 2]:  # 低开
-            continue
+        # if i < 100:  # 不考虑次新股
+        #     continue
+        # if not (ma5[i - 3] > ma10[i - 3] > ma20[i - 3]):  # 均线上行
+        #     continue
+        # if hist['open'][i - 3] < hist['close'][i - 3]:  # 板前面得是阳线
+        #     continue
+        # if pChange[i - 2] <= 9.5:  # 板
+        #     continue
+        # if hist['open'][i - 1] >= hist['close'][i - 2]:  # 低开
+        # # if hist['open'][i - 1] < hist['close'][i - 2]:  # 高开
+        #     continue
+
+
+        # 连续三天上涨超过1%
+        # if pChange[i - 3] < 1:
+        #     continue
+        # if pChange[i - 2] < 1:
+        #     continue
+        # if pChange[i - 1] < 1:
+        #     continue
 
         # 大盘上行
         # mssh0 = sh.get_value(hist.index[i - 3], 'ma5')
@@ -62,13 +81,22 @@ def explore_second_rise(index):
         # if ma10[i - 3] >= ma10[i - 2]:  # 个股上行
         #     continue
 
-        benefit = round((hist['open'][i] - hist['open'][i - 1]) / hist['open'][i - 1] * 100, 2)  # 低开买入，开盘即抛
-        benefit = round((hist['close'][i] - hist['open'][i - 1]) / hist['open'][i - 1] * 100, 2)  # 低开买入，收盘抛出
+        # 二板策略
+        benefit = pChange[i]
+        # benefit = round((hist['close'][i + 1] - hist['close'][i - 1]) / hist['close'][i - 1] * 100, 2)
+
+        # 板后低开策略
+        # benefit = round((hist['open'][i] - hist['open'][i - 1]) / hist['open'][i - 1] * 100, 2)  # 低开买入，开盘即抛
+        # benefit = round((hist['close'][i] - hist['open'][i - 1]) / hist['open'][i - 1] * 100, 2)  # 低开买入，收盘抛出
+
+        # 连续三天上涨超过1%
+        # benefit = round((hist['open'][i] - hist['open'][i - 1]) / hist['open'][i - 1] * 100, 2)  # 开盘买入，开盘卖出
+        # benefit = round((hist['open'][i] - hist['close'][i - 1]) / hist['close'][i - 1] * 100, 2)  # 尾盘买入，开盘卖出
 
         mu.acquire()
-        # p_change_array.append(pChange[i])
         p_change_array.append(benefit)
         code_date[index] = hist.index[i]
+        # code_date[index] = hist.index[i + 1]
         mu.release()
 
         if benefit < -5:
@@ -130,12 +158,10 @@ code_date = {}
 time_dict = {}
 mu = threading.Lock()
 
-sh = None
-
 if __name__ == '__main__':
     s = datetime.datetime.now()
 
-    global start, end, p_change_array, sh
+    global start, end, p_change_array
 
     t = datetime.datetime.now() - datetime.timedelta(days=365 * 1 / 1)
     day = t.date()
@@ -144,8 +170,6 @@ if __name__ == '__main__':
     t = datetime.datetime.now() - datetime.timedelta(days=0 + 0)
     day = t.date()
     end = str(day)
-
-    sh = ts.get_hist_data('sh')
 
     # 计算二板收益
     basics = ts.get_stock_basics()
@@ -163,7 +187,7 @@ if __name__ == '__main__':
     print('平均收益', '{}%'.format(round(n.mean(), 2)))
 
     # 计算高价位分布
-    # calc_distribute(basics)
+    calc_distribute(basics)
 
     print('end')
 
