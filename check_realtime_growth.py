@@ -13,6 +13,8 @@ _rise_stop_counts = {}
 def list_it():
     # 涨幅榜
     'https://xueqiu.com/stock/cata/stocklist.json?page=1&size=60&order=desc&orderby=percent&type=11,12&_=1486352866218'
+    # 详情
+    'https://xueqiu.com/v4/stock/quote.json?code=SH600000&_=1486357136757'
     # 分钟行情
     'https://xueqiu.com/stock/forchart/stocklist.json?symbol=SH603009&period=1d&one_min=1&_=1483747758603'
     # 盘口
