@@ -53,6 +53,8 @@ def list_it():
             continue
         elif float(x['high']) == float(x['low']):
             continue
+        elif x['name'].startswith('N'):
+            continue
 
         url = 'https://xueqiu.com/stock/forchart/stocklist.json?symbol={}&period=1d&one_min=1&_={}'.format(x['symbol'],
                                                                                                            int(
@@ -73,7 +75,7 @@ def list_it():
         rates = []
         _open = float(x['current']) - float(x['change'])
         for i in range(len(chartlist) - 1):
-            growth = (chartlist[i + 1]['avg_price'] - chartlist[i]['avg_price']) / _open * 100
+            growth = (chartlist[i + 1]['current'] - chartlist[i]['current']) / _open * 100
             if growth > .8:
                 count += 1
                 rates.append(growth)
@@ -96,6 +98,7 @@ def list_it():
     hist['sign'] = _signs
     hist['url'] = _urls
     hist = hist.sort_values(['sign', 'count'], ascending=False)
+    hist = hist.reset_index(drop=True)
     print(hist)
 
 
