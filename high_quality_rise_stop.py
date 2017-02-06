@@ -88,7 +88,7 @@ def list_it():
         _codes.append(x['code'])
         _names.append(x['name'])
         _counts.append(count)
-        _signs.append(round(sum(rates) / count,2))
+        _signs.append(round(sum(rates) / count, 2))
         _urls.append('https://xueqiu.com/S/{}'.format(x['symbol']))
 
         print('{}, percent: {}, current: {}, rise stop: {}'.format(x['name'], x['percent'], x['current'],
@@ -108,7 +108,8 @@ def list_it():
     path = './data'
     if not os.path.exists(path):
         os.mkdir(path)
-    hist.to_csv('{}/{}.csv'.format(path,date))
+    hist.to_csv('{}/{}.csv'.format(path, date))
+
 
 def get_rise_stop(code):
     global _redis, _rise_stops
