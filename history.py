@@ -3,7 +3,6 @@ import os
 from multiprocessing.pool import ThreadPool
 
 import redis
-
 import tushare as ts
 
 
@@ -42,6 +41,7 @@ def update(index):
         if os.path.exists(filename):
             continue
 
+        print(filename)
         tick = ts.get_tick_data(index, date=date)
         # r.set(key, tick.to_string())
         tick.to_csv(filename)
