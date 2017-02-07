@@ -32,6 +32,8 @@ def explore_growth_form(code):
 
     # print(hist)
 
+    average_volume = hist['volume'].mean()
+
     from_index = -1
     for i in range(1, hist_len):
         if i < from_index:
@@ -49,30 +51,45 @@ def explore_growth_form(code):
         #         if hist['p_change'][i + 2] > 5:  # 上涨5%
         #             if hist['high'][i + 3] != hist['low'][i + 3]:  # 能买得进
 
-        if hist['p_change'][i] > 4:  # 上涨4%
-            if hist['p_change'][i + 1] > 4:  # 上涨4%
-                if hist['high'][i + 2] != hist['low'][i + 2]:  # 能买得进
+        # if hist['p_change'][i] > 4:  # 上涨4%
+        #     if hist['p_change'][i + 1] > 4:  # 上涨4%
+        #         if hist['high'][i + 2] != hist['low'][i + 2]:  # 能买得进
+        #
+        #             if hist['close'][i + 2] < hist['close'][i + 1]:  # 买入当天收盘比前一天底，第二天开盘卖出
+        #                 j = i + 3
+        #                 benefit = (hist['open'][j] - hist['open'][i + 2]) / hist['open'][i + 2]
+        #             else:
+        #                 for j in range(i + 3, hist_len):
+        #                     if hist['close'][j] < hist['close'][j - 1]:  # 收盘比前一天的底，收盘卖出
+        #                         break
+        #                 benefit = (hist['close'][j] - hist['open'][i + 2]) / hist['open'][i + 2]
 
-                    if hist['close'][i + 2] < hist['close'][i + 1]:  # 买入当天收盘比前一天底，第二天开盘卖出
-                        j = i + 3
-                        benefit = (hist['open'][j] - hist['open'][i + 2]) / hist['open'][i + 2]
-                    else:
-                        for j in range(i + 3, hist_len):
-                            if hist['close'][j] < hist['close'][j - 1]:  # 收盘比前一天的底，收盘卖出
-                                break
-                        benefit = (hist['close'][j] - hist['open'][i + 2]) / hist['open'][i + 2]
+        # if hist['p_change'][i] < 3:  # 上涨4%
+        #     if hist['p_change'][i + 1] < 3:  # 上涨4%
+        #         if hist['ma5'][i + 1] > hist['ma5'][i]:
+        #             if hist['high'][i + 2] != hist['low'][i + 2] and hist['high'][i + 2] > 9.5:  # 能买得进
 
+        if i + 10 < hist_len:
+            sum_volume = 0
+            for k in range(8):
+                sum_volume += hist['volume'][i + k]
+
+            if sum_volume / 8 < average_volume:
+                # if (hist['close'][i + 8] - hist['close'][i]) / hist['close'][i] < 0.1:  # 两周内上涨不超过10%
+                if hist['high'][i + 9] != hist['low'][i + 9] and hist['high'][i + 9] > 9.5:  # 能买得进
+
+                    benefit = (hist['close'][i + 10] - hist['high'][i + 9]) / hist['high'][i + 9]
                     benefit = round(benefit * 100, 2)
 
                     mu.acquire()
                     benefits.append(benefit)
                     mu.release()
 
-                    print('https://xueqiu.com/S/{}{}'.format(get_stock_type(code), code), hist.index[i + 2],
-                          hist.index[j], j - (i + 2),
+                    print('https://xueqiu.com/S/{}{}'.format(get_stock_type(code), code), hist.index[i + 9],
+                          # hist.index[j], j - (i + 2),
                           benefit)
 
-                    from_index = j
+                    # from_index = j
 
 
 mu = threading.Lock()

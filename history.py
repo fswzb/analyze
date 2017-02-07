@@ -3,6 +3,7 @@ import os
 from multiprocessing.pool import ThreadPool
 
 import redis
+
 import tushare as ts
 
 
@@ -12,23 +13,38 @@ def update(index):
     # hist = ts.get_h_data(index)
     hist = ts.get_hist_data(index)
 
-    path = 'd:/analyze_data'
-    if not os.path.exists(path):
-        os.mkdir(path)
+    root_path = 'd:/analyze_data'
+    if not os.path.exists(root_path):
+        os.makedirs(root_path)
 
-    hist.to_csv('{}/{}.csv'.format(path, index))
+    k_path = '{}/k'.format(root_path)
+    if not os.path.exists(k_path):
+        os.makedirs(k_path)
 
-    r = redis.Redis(connection_pool=redis_pool)
+    hist.to_csv('{}/{}.csv'.format(k_path, index))
+
+    # r = redis.Redis(connection_pool=redis_pool)
+
+    tick_path = '{}/tick/{}'.format(root_path, index)
+    if not os.path.exists(tick_path):
+        os.makedirs(tick_path)
+
     for i, row in hist.iterrows():
         date = str(i)
-        key = '{}_{}'.format(index, date)
+        # key = '{}_{}'.format(index, date)
 
-        if r.exists(key):
+        # if r.exists(key):
+        #     continue
+
+        # print(key)
+
+        filename = '{}/{}.csv'.format(tick_path, date)
+        if os.path.exists(filename):
             continue
 
-        print(key)
         tick = ts.get_tick_data(index, date=date)
-        r.set(key, tick.to_string())
+        # r.set(key, tick.to_string())
+        tick.to_csv(filename)
 
 
 redis_pool = None

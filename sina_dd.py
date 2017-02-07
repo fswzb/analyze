@@ -8,6 +8,7 @@ import tushare as ts
 def get_dd(index):
     hist = ts.get_sina_dd(index, date=date,vol=500)
     print(hist)
+    print(hist['volume'].sum())
 
 date=None
 if __name__ == '__main__':
@@ -20,5 +21,5 @@ if __name__ == '__main__':
     # tp.map(get_dd, ['300268'])
     # tp.map(get_dd, ['002591'])
     # tp.map(get_dd, ['300323'])
-    # tp.map(get_dd, ['002451'])
-    tp.map(get_dd, ['002552'])
+    tp.map(get_dd, ['601177'])
+    # tp.map(get_dd, ['002552'])
