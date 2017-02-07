@@ -78,7 +78,7 @@ def list_it():
         _open = float(x['current']) - float(x['change'])
         for i in range(len(chartlist) - 1):
             growth = (chartlist[i + 1]['current'] - chartlist[i]['current']) / _open * 100
-            if growth > .8:
+            if growth > 1:
                 count += 1
                 rates.append(growth)
 
