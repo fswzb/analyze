@@ -30,9 +30,8 @@ def list_it():
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36 FirePHP/0.7.4'
     }
 
-    url = 'https://xueqiu.com/stock/cata/stocklist.json?page=1&size=60&order=desc&orderby=percent&type=11,12&_={}'.format(
-        int(
-            time.time() * 1000))
+    stock_rank_template = 'https://xueqiu.com/stock/cata/stocklist.json?page=1&size=60&order=desc&orderby=percent&type=11,12&_={}'
+    url = stock_rank_template.format(int(time.time() * 1000))
 
     try:
         dom = requests.get(url=url, headers=headers)
@@ -58,9 +57,8 @@ def list_it():
         elif x['name'].startswith('N'):
             continue
 
-        url = 'https://xueqiu.com/stock/forchart/stocklist.json?symbol={}&period=1d&one_min=1&_={}'.format(x['symbol'],
-                                                                                                           int(
-                                                                                                               time.time() * 1000))
+        minute_temlate = 'https://xueqiu.com/stock/forchart/stocklist.json?symbol={}&period=1d&one_min=1&_={}'
+        url = minute_temlate.format(x['symbol'], int(time.time() * 1000))
         try:
             dom = requests.get(url=url, headers=headers)
         except Exception as e:
@@ -75,12 +73,17 @@ def list_it():
 
         count = 0
         rates = []
-        _open = float(x['current']) - float(x['change'])
+        pre_close = float(x['current']) - float(x['change'])
         for i in range(len(chartlist) - 1):
-            growth = (chartlist[i + 1]['current'] - chartlist[i]['current']) / _open * 100
-            if growth > 1:
+            growth = (chartlist[i + 1]['current'] - chartlist[i]['current']) / pre_close * 100
+            if abs(growth) > 1:
                 count += 1
                 rates.append(growth)
+
+        # 撮合成交
+        count += 1
+        open_f = 1  # 撮合成交系数
+        rates.append((chartlist[len(chartlist) - 1]['current'] - pre_close) / pre_close * 100 * open_f)
 
         if count == 0:
             continue
@@ -91,6 +94,8 @@ def list_it():
         _signs.append(round(sum(rates) / count, 2))
         _urls.append('https://xueqiu.com/S/{}'.format(x['symbol']))
 
+        # print(x)
+        # print(url)
         print('{}, percent: {}, current: {}, rise stop: {}'.format(x['name'], x['percent'], x['current'],
                                                                    get_rise_stop(x['code'])),
               x['code'], x)
