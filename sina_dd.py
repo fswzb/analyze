@@ -6,16 +6,18 @@ import tushare as ts
 
 
 def get_dd(index):
-    hist = ts.get_sina_dd(index, date=date,vol=500)
-    print(hist)
+    hist = ts.get_sina_dd(index, date=date, vol=500)
+    # print(hist)
     print(hist['volume'].sum())
 
-date=None
-if __name__ == '__main__':
 
-    t = datetime.datetime.now().date()
-    date = str(t)
-    basics = ts.get_stock_basics()
+date = None
+if __name__ == '__main__':
+    t = datetime.datetime.now()
+
+    date = datetime.datetime.now().date()
+    date = str(date)
+    # basics = ts.get_stock_basics()
     tp = ThreadPool()
     # tp.map(get_dd, basics.index)
     # tp.map(get_dd, ['300268'])
@@ -23,3 +25,5 @@ if __name__ == '__main__':
     # tp.map(get_dd, ['300323'])
     tp.map(get_dd, ['601177'])
     # tp.map(get_dd, ['002552'])
+
+    print(datetime.datetime.now() - t)
