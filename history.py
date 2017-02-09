@@ -4,6 +4,7 @@ import threading
 from multiprocessing.pool import ThreadPool
 from time import sleep
 
+import pandas as pd
 import tushare as ts
 
 
@@ -65,7 +66,12 @@ if __name__ == '__main__':
 
     # redis_pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
 
-    basics = ts.get_stock_basics()
+    try:
+        basics = ts.get_stock_basics()
+        basics.to_csv('d:/analyze_data/all.csv')
+    except:
+        basics = pd.read_csv('d:/analyze_data/all.csv')
+
     index_pool = basics.index
 
     tp = ThreadPool()
