@@ -13,6 +13,8 @@ def update(index):
     try:
         # hist = ts.get_h_data(index)
         hist = ts.get_hist_data(index)
+        if hist is None or len(hist) == 0:
+            return
 
         root_path = 'd:/analyze_data'
         if not os.path.exists(root_path):
