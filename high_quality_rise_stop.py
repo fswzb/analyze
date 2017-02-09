@@ -72,18 +72,24 @@ def list_it():
         chartlist = minutes['chartlist']
 
         count = 0
-        rates = []
+        growth_array = []
         pre_close = float(x['current']) - float(x['change'])
+        _sum = 0
         for i in range(len(chartlist) - 1):
-            growth = (chartlist[i + 1]['current'] - chartlist[i]['current']) / pre_close * 100
-            if abs(growth) > 1:
-                count += 1
-                rates.append(growth)
+            diff = chartlist[i + 1]['current'] - chartlist[i]['current']
+            if diff < 0:
+                growth = _sum / pre_close * 100
+                _sum = 0
+                if growth > 1:
+                    growth_array.append(growth)
+                    count += 1
+            else:
+                _sum += diff
 
         # 撮合成交
         count += 1
         open_f = 1  # 撮合成交系数
-        rates.append((chartlist[len(chartlist) - 1]['current'] - pre_close) / pre_close * 100 * open_f)
+        growth_array.append((chartlist[len(chartlist) - 1]['current'] - pre_close) / pre_close * 100 * open_f)
 
         if count == 0:
             continue
@@ -91,7 +97,7 @@ def list_it():
         _codes.append(x['code'])
         _names.append(x['name'])
         _counts.append(count)
-        _signs.append(round(sum(rates) / count, 2))
+        _signs.append(round(sum(growth_array) / count, 2))
         _urls.append('https://xueqiu.com/S/{}'.format(x['symbol']))
 
         # print(x)
