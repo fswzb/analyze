@@ -15,7 +15,7 @@ def get_stock_basics():
         text = text.replace('--', '')
         df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
         basics = df.set_index('code')
-
+    return basics
 
 def get_k_data(code, date, ktype):
     """获取任意分钟k线"""

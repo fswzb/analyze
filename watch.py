@@ -8,8 +8,8 @@ if __name__ == '__main__':
     text = text.replace('--', '')
     df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
     hist = df.set_index('code')
-    # hist = hist.head(5)
-    # hist = hist.tail(5)
+    # hist = hist.head(10)
+    # hist = hist.tail(10)
     print(hist)
 
     all = ts.get_today_all()
@@ -20,6 +20,7 @@ if __name__ == '__main__':
         row = all.loc[index]
         if row['volume'] > 0:
             # print(row)
+            row['url'] = hist['url'][i]
             filterd = filterd.append(row)
 
     now = pd.DataFrame({'code': filterd['code']})
@@ -28,6 +29,9 @@ if __name__ == '__main__':
     now['open'] = filterd['open']
     now['openpercent'] = ((filterd['open'] - filterd['settlement']) / filterd['settlement'] * 100).round(3)
     now['changepercent'] = filterd['changepercent']
+    now['url'] = filterd['url']
+    now = now.reset_index(drop=True)
+    now = now.sort_values('openpercent')
 
     open_positive = (now['openpercent'] > 0).sum() / len(now) * 100
     open_avg = now['openpercent'].mean()
@@ -35,7 +39,7 @@ if __name__ == '__main__':
     now_avg = now['changepercent'].mean()
 
     print(now)
-    print('open正收益概率{}%'.format(round(open_positive, 2)))
-    print('open综合收益{}%'.format(round(open_avg, 2)))
-    print('now正收益概率{}%'.format(round(now_positive, 2)))
-    print('now综合收益{}%'.format(round(now_avg, 2)))
+    print('open正收益概率：{}%'.format(round(open_positive, 2)))
+    print('open综合收益：{}%'.format(round(open_avg, 2)))
+    print('now正收益概率：{}%'.format(round(now_positive, 2)))
+    print('now综合收益：{}%'.format(round(now_avg, 2)))

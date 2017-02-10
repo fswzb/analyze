@@ -116,9 +116,9 @@ def list_it():
 
     date = str(datetime.datetime.now().date())
     # path = 'd:/analyze_data'
-    path = './data'
+    path = './data/high_quality_rise_stop'
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
     hist.to_csv('{}/{}.csv'.format(path, date))
 
 
