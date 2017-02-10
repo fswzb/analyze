@@ -6,6 +6,7 @@ from multiprocessing.pool import ThreadPool
 import numpy as np
 
 import tushare as ts
+from utils import get_stock_basics
 
 
 def explore_second_rise(index):
@@ -77,7 +78,7 @@ if __name__ == '__main__':
     day = t.date()
     end = str(day)
 
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     pool = ThreadPool()
     pool.map(explore_second_rise, basics.index)
 

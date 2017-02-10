@@ -2,9 +2,8 @@
 import datetime
 from multiprocessing.pool import ThreadPool
 
-import pandas as pd
 import tushare as ts
-from pandas.compat import StringIO
+from utils import get_stock_basics
 
 
 def get_bid(index):
@@ -20,11 +19,7 @@ if __name__ == '__main__':
     date = t.date()
     date = str(date)
 
-    text = open('d:/analyze_data/all.csv', encoding='GBK').read()
-    text = text.replace('--', '')
-    df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
-    basics = df.set_index('code')
-
+    basics = get_stock_basics()
     basics = basics[basics['outstanding'] < 5]
     print(len(basics))
 

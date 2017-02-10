@@ -1,8 +1,20 @@
 from multiprocessing.pool import ThreadPool
 
 import pandas as pd
+from pandas.compat import StringIO
 
 import tushare as ts
+
+
+def get_stock_basics():
+    try:
+        basics = ts.get_stock_basics()
+        basics.to_csv('d:/analyze_data/all.csv')
+    except:
+        text = open('d:/analyze_data/all.csv', encoding='GBK').read()
+        text = text.replace('--', '')
+        df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
+        basics = df.set_index('code')
 
 
 def get_k_data(code, date, ktype):
@@ -66,6 +78,6 @@ def get_high_time(index):
 
 
 if __name__ == '__main__':
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     td = ThreadPool()
     td.map(get_high_time, basics.index)

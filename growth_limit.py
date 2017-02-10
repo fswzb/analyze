@@ -7,6 +7,7 @@ import pandas as pd
 import redis
 
 import tushare as ts
+from utils import get_stock_basics
 
 
 def last_full_day():
@@ -120,7 +121,7 @@ if __name__ == '__main__':
     r.set('name', 'marz')
     print(r.get('name').decode('utf-8'))
 
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     tp = ThreadPool()
     tp.map(update_info, basics.index)
 

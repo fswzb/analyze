@@ -8,7 +8,7 @@ import pandas as pd
 
 import tushare as ts
 from easyutils import get_stock_type
-from utils import get_k_data
+from utils import get_k_data, get_stock_basics
 
 
 def explore_second_rise(index):
@@ -172,7 +172,7 @@ if __name__ == '__main__':
     end = str(day)
 
     # 计算二板收益
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     pool = ThreadPool()
     pool.map(explore_second_rise, basics.index)
 

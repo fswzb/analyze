@@ -1,9 +1,8 @@
-import tushare as ts
-
-
 # print(ts.get_hist_data())
 # print(ts.get_suspended())
 # print(ts.get_terminated())
+from utils import get_stock_basics
+
 
 def question():
     i = 1
@@ -23,7 +22,7 @@ def question():
 
 
 if __name__ == '__main__':
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     basics = basics.sort_values('outstanding')
     print(basics)
 
