@@ -4,9 +4,8 @@ import threading
 from multiprocessing.pool import ThreadPool
 from time import sleep
 
-import pandas as pd
 import tushare as ts
-from pandas.compat import StringIO
+from utils import get_stock_basics
 
 
 def update_tick_and_dd(index):
@@ -78,15 +77,7 @@ if __name__ == '__main__':
 
     # redis_pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
 
-    try:
-        basics = ts.get_stock_basics()
-        basics.to_csv('d:/analyze_data/all.csv')
-    except:
-        text = open('d:/analyze_data/all.csv', encoding='GBK').read()
-        text = text.replace('--', '')
-        df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
-        basics = df.set_index('code')
-
+    basics = get_stock_basics()
     index_pool = basics.index
 
     tp = ThreadPool()

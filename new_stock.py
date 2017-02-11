@@ -4,6 +4,7 @@ import datetime
 import numpy as np
 
 import tushare as ts
+from utils import get_stock_basics
 
 
 def get_new_stock_list():
@@ -44,7 +45,7 @@ def get_new_stock_list():
     平均收益率: -0.99%
     """
 
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     _filter = [row > 20160612 for row in basics['timeToMarket']]
     n_stocks = basics[_filter]
     strategy1 = []

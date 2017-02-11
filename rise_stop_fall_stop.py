@@ -7,6 +7,7 @@ import numpy as np
 
 import tushare as ts
 from easyutils import get_stock_type
+from utils import get_stock_basics
 
 
 def explore_growth_form(code):
@@ -107,7 +108,7 @@ if __name__ == '__main__':
     day = t.date()
     end = str(day)
 
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     tp = ThreadPool()
     tp.map(explore_growth_form, basics.index)
 

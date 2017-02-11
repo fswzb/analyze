@@ -2,6 +2,7 @@
 import datetime
 
 import tushare as ts
+from utils import get_stock_basics
 
 
 def is_growth_form(hist):
@@ -48,7 +49,7 @@ def explore_growth_form(hist):
 if __name__ == '__main__':
     s = datetime.datetime.now()
 
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     for code in basics.index:
         hist = ts.get_hist_data(code)
         explore_growth_form(hist)
