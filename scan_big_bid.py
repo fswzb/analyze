@@ -2,6 +2,7 @@
 import datetime
 import os
 import threading
+from datetime import time
 from multiprocessing.pool import ThreadPool
 
 import pandas as pd
@@ -13,21 +14,33 @@ from utils import get_stock_basics
 
 
 def get_bid(index):
+    if index in codes:
+        return
+
     hist = ts.get_sina_dd(index, date=date, vol=500)
     if hist is not None:
-        print(index, hist['volume'].sum())
+        # print(index, hist['volume'].sum())
 
         hist = hist.iloc[::-1]
         r = redis.Redis(connection_pool=redis_pool)
         rise_stop = r.get('quant.{}.rise_stop'.format(index))
         rise_stop = float(rise_stop)
+        super_dd = False
         for i in range(len(hist)):
-            if hist['price'][i] == rise_stop:
-                # if hist['preprice'][i] != hist['price'][i]:
-                mu.acquire()
-                codes.append(index)
-                mu.release()
-                break
+            if hist['volume'][i] > 2000 * 100:
+                super_dd = True
+
+            if hist['price'][i] == rise_stop:  # 涨停
+                if hist['preprice'][i] != 0:  # 开盘涨停
+                    if hist['preprice'][i] != hist['price'][i] or super_dd:  # 大单打到涨停
+                        mu.acquire()
+                        codes.append(index)
+                        mu.release()
+                        print('time: {}, rise stop: {}, preprice: {}, price: {}'.format(hist['time'][i], rise_stop,
+                                                                                        hist['preprice'][i],
+                                                                                        hist['price'][i]))
+                        print('https://xueqiu.com/S/{}{}'.format(get_stock_type(index).upper(), index))
+                        break
 
 
 date = None
@@ -39,7 +52,7 @@ if __name__ == '__main__':
 
     date = t.date()
     date = str(date)
-    date = '2017-02-09'
+    # date = '2017-02-09'
 
     redis_pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
 
@@ -47,8 +60,25 @@ if __name__ == '__main__':
     basics = basics[basics['outstanding'] < 5]
     print('关注{}只股票'.format(len(basics)))
 
+    close_time = time(hour=15)
+    i = 0
     tp = ThreadPool()
-    tp.map(get_bid, basics.index)
+    keep_scan = True
+    while keep_scan:
+        i += 1
+        print('round', i)
+
+        now = datetime.datetime.now()
+        if now.time() > close_time:
+            keep_scan = False
+
+        try:
+            tp.map(get_bid, basics.index)
+        except:
+            pass
+
+        end_time = datetime.datetime.now()
+        print('round {}, curent time {}, elapsed time: {}'.format(i, end_time.time(), end_time - now))
 
     print('codes', codes)
 

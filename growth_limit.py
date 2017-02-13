@@ -93,7 +93,7 @@ def get_rise_stop_count(hist):
 
 def update_info(code):
     global end
-    hist = ts.get_k_data(code, start='2015-01-01', end=end)
+    hist = ts.get_k_data(code, start='2016-06-01', end=end)
 
     if 'close' not in hist.keys():
         return
