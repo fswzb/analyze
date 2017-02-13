@@ -27,33 +27,27 @@ def update_tick_and_dd(index):
 
         hist.to_csv('{}/{}.csv'.format(k_path, index))
 
-        # r = redis.Redis(connection_pool=redis_pool)
-
         tick_path = '{}/tick/{}'.format(root_path, index)
         if not os.path.exists(tick_path):
             os.makedirs(tick_path)
 
-        dd_path = '{}/dd/{}'.format(root_path, index)
-        if not os.path.exists(dd_path):
-            os.makedirs(dd_path)
-
+        # tick数据
         for i, row in hist.iterrows():
             date = str(i)
-            # key = '{}_{}'.format(index, date)
-
-            # if r.exists(key):
-            #     continue
-
-            # print(key)
-
-            # tick数据
             filename = '{}/{}.csv'.format(tick_path, date)
             if not os.path.exists(filename):
                 print(filename)
                 tick = ts.get_tick_data(index, date=date)
                 tick.to_csv(filename)
 
-            # 大单数据
+        dd_path = '{}/dd/{}'.format(root_path, index)
+        if not os.path.exists(dd_path):
+            os.makedirs(dd_path)
+
+        # 大单数据，貌似只有近十几个交易日的数据
+        hist = hist.head(5)
+        for i, row in hist.iterrows():
+            date = str(i)
             filename = '{}/{}.csv'.format(dd_path, date)
             if not os.path.exists(filename):
                 print(filename)
