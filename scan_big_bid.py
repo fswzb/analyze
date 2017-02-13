@@ -32,7 +32,8 @@ def get_bid(index):
 
             if hist['price'][i] == rise_stop:  # 涨停
                 if hist['preprice'][i] != 0:  # 开盘涨停
-                    if hist['preprice'][i] != hist['price'][i] or super_dd:  # 大单打到涨停
+                    # if hist['preprice'][i] != hist['price'][i] or super_dd:  # 大单打到涨停
+                    if hist['preprice'][i] != hist['price'][i]:  # 大单打到涨停
                         mu.acquire()
                         codes.append(index)
                         mu.release()
