@@ -10,7 +10,7 @@ import tushare as ts
 def get_settlement(hist):
     """计算前一日的收盘价，hist必须按时间倒序排列"""
     settlement = list(hist['close'])
-    settlement.append(round(hist['open'][0] / 1.1, 2))
+    settlement.append(round(hist['open'][len(hist) - 1] / 1.1, 2))
     settlement.pop(0)
     return settlement
 
