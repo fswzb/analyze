@@ -4,7 +4,7 @@ from pandas.compat import StringIO
 import tushare as ts
 
 if __name__ == '__main__':
-    text = open('data/scan_big_bid/2017-02-13.csv', encoding='GBK').read()
+    text = open('data/scan_big_bid/2017-02-14.csv', encoding='GBK').read()
     text = text.replace('--', '')
     df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
     hist = df.set_index('code')
