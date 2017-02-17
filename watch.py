@@ -4,7 +4,7 @@ from pandas.compat import StringIO
 import tushare as ts
 
 if __name__ == '__main__':
-    text = open('data/scan_big_bid/2017-02-15.csv', encoding='GBK').read()
+    text = open('data/scan_big_bid/2017-02-16.csv', encoding='GBK').read()
     text = text.replace('--', '')
     df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
     hist = df.set_index('code')
@@ -21,13 +21,15 @@ if __name__ == '__main__':
         if row['volume'] > 0:
             # print(row)
             row['url'] = hist['url'][i]
+            row['prehigh'] = hist['high'][i]
             filterd = filterd.append(row)
 
     now = pd.DataFrame({'code': filterd['code']})
     now['name'] = filterd['name']
+    now['prehigh'] = filterd['prehigh']
     now['settlement'] = filterd['settlement']
     now['open'] = filterd['open']
-    now['openpercent'] = ((filterd['open'] - filterd['settlement']) / filterd['settlement'] * 100).round(3)
+    now['openpercent'] = ((filterd['open'] - filterd['prehigh']) / filterd['prehigh'] * 100).round(3)
     now['changepercent'] = filterd['changepercent']
     now['url'] = filterd['url']
     now = now.reset_index(drop=True)
