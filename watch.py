@@ -4,7 +4,12 @@ from pandas.compat import StringIO
 import tushare as ts
 
 if __name__ == '__main__':
-    text = open('data/scan_big_bid/2017-02-17.csv', encoding='GBK').read()
+    sh = ts.get_hist_data('sh')
+    # print(sh)
+
+    filename = 'data/scan_big_bid/{}.csv'.format(sh.index[0])
+    print(filename)
+    text = open(filename, encoding='GBK').read()
     text = text.replace('--', '')
     df = pd.read_csv(StringIO(text), dtype={'code': 'object'})
     hist = df.set_index('code')
@@ -30,7 +35,7 @@ if __name__ == '__main__':
     now['settlement'] = filterd['settlement']
     now['open'] = filterd['open']
     now['openpercent'] = ((filterd['open'] - filterd['prehigh']) / filterd['prehigh'] * 100).round(3)
-    now['changepercent'] = filterd['changepercent']
+    now['changepercent'] = ((filterd['trade'] - filterd['prehigh']) / filterd['prehigh'] * 100).round(3)
     now['url'] = filterd['url']
     now = now.reset_index(drop=True)
     # now = now.sort_values('openpercent')
