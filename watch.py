@@ -1,13 +1,17 @@
+import datetime
+
 import pandas as pd
 from pandas.compat import StringIO
 
 import tushare as ts
 
 if __name__ == '__main__':
-    sh = ts.get_hist_data('sh')
-    # print(sh)
+    now = datetime.datetime.now()
+    today = str(now.date())
 
-    filename = 'data/scan_big_bid/{}.csv'.format(sh.index[0])
+    sh = ts.get_hist_data('sh')
+    filename = 'data/scan_big_bid/{}.csv'.format(sh.index[0] if sh.index[0] != today else sh.index[1])
+
     print(filename)
     text = open(filename, encoding='GBK').read()
     text = text.replace('--', '')
