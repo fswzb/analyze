@@ -34,6 +34,10 @@ def update_tick_and_dd(index):
         # tick数据
         for i, row in hist.iterrows():
             date = str(i)
+
+            if date == today:
+                continue
+
             filename = '{}/{}.csv'.format(tick_path, date)
             if not os.path.exists(filename):
                 print(filename)
@@ -48,6 +52,10 @@ def update_tick_and_dd(index):
         hist = hist.head(5)
         for i, row in hist.iterrows():
             date = str(i)
+
+            if date == today:
+                continue
+
             filename = '{}/{}.csv'.format(dd_path, date)
             if not os.path.exists(filename):
                 print(filename)
@@ -66,8 +74,11 @@ def update_tick_and_dd(index):
 # redis_pool = None
 fail_pool = []
 mu = threading.Lock()
+today = None
 if __name__ == '__main__':
     t = datetime.datetime.now()
+
+    today = str(t.date())
 
     # redis_pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
 

@@ -37,7 +37,7 @@ def list_it():
         'Accept-Language': 'en-US,en;q=0.8',
         # 'Cache-Control': 'max-age=0',
         'Connection': 'keep-alive',
-        'Cookie': 'bid=c018f745bdec43fc4a443e4eae8444de_ix8f40u5; webp=0; s=741dd8rbxa; xq_a_token=734f98bd03885fa6f46c3df71533334815e87e3a; xq_r_token=7cc627989254e3bfcbfb98b40e0d7b4664d19be3; u=7709157979; xq_token_expire=Sun%20Feb%2019%202017%2013%3A22%3A05%20GMT%2B0800%20(CST); xq_is_login=1; Hm_lvt_1db88642e346389874251b5a1eded6e3=1484213222,1484559584,1484614479,1485321715; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1485321906; __utma=1.1283382214.1482897890.1484614489.1485321907.15; __utmc=1; __utmz=1.1484203800.13.2.utmcsr=baidu|utmccn=(organic)|utmcmd=organic',
+        'Cookie': 'bid=c018f745bdec43fc4a443e4eae8444de_ix8f40u5; webp=0; s=741dd8rbxa; u.sig=Ba7X4k_GCsT83XtIo_f4wYd2E2c; aliyungf_tc=AQAAAHn5twKGBwEAGq72Oua+LXnW8LOf; xq_a_token=54a2d2313cac4954f462750c237e1cea53041782; xq_r_token=a6a6c9610b39953a535e7ee4946d4f1fbc929d0e; u=7709157979; xq_token_expire=Mon%20Mar%2020%202017%2010%3A37%3A45%20GMT%2B0800%20(CST); xq_is_login=1; snbim_minify=true; __utma=1.1283382214.1482897890.1487828205.1487830655.67; __utmc=1; __utmz=1.1484203800.13.2.utmcsr=baidu|utmccn=(organic)|utmcmd=organic; Hm_lvt_1db88642e346389874251b5a1eded6e3=1487746935,1487812643,1487817444,1487818275; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1487830655',
         'Host': 'xueqiu.com',
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36 FirePHP/0.7.4'
