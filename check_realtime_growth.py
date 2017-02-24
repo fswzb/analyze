@@ -50,6 +50,8 @@ def list_it():
 
         try:
             dom = requests.get(url=url, headers=headers)
+            r = dom.content.decode('utf-8')
+            r = json.loads(r)
         except Exception as e:
             print(e)
             print('请检查token')
@@ -57,8 +59,6 @@ def list_it():
 
         print(url)
         potentials = []
-        r = dom.content.decode('utf-8')
-        r = json.loads(r)
 
         if 'error_code' in r:
             print(r)
@@ -114,7 +114,7 @@ def get_rise_stop_count(code):
 
 
 if __name__ == '__main__':
-    global _redis
+    # global _redis
     pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
     _redis = redis.Redis(connection_pool=pool)
 

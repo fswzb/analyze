@@ -111,7 +111,7 @@ redis_pool = None
 end = last_full_day()
 
 if __name__ == '__main__':
-    global redis_pool
+    # global redis_pool
 
     s = datetime.datetime.now()
 
