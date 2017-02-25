@@ -22,18 +22,21 @@ def question():
 
 
 if __name__ == '__main__':
-    basics = get_stock_basics()
-    basics = basics.sort_values('outstanding')
-    print(basics)
-
-    outstanding = basics['outstanding']
-    print(outstanding)
-    print(len(outstanding), outstanding.mean())
-
-    min_and_middle = basics
-    min_and_middle = min_and_middle[min_and_middle['outstanding'] < 7]  # 流通股本7亿以下
-    min_and_middle = min_and_middle[min_and_middle['liquidAssets'] < 100 * 10000]  # 流通市值100亿以内
-    print(min_and_middle)
-    print(len(min_and_middle), min_and_middle['outstanding'].mean())
+    # basics = get_stock_basics()
+    # basics = basics.sort_values('outstanding')
+    # print(basics)
+    #
+    # outstanding = basics['outstanding']
+    # print(outstanding)
+    # print(len(outstanding), outstanding.mean())
+    #
+    # min_and_middle = basics
+    # min_and_middle = min_and_middle[min_and_middle['outstanding'] < 7]  # 流通股本7亿以下
+    # min_and_middle = min_and_middle[min_and_middle['liquidAssets'] < 100 * 10000]  # 流通市值100亿以内
+    # print(min_and_middle)
+    # print(len(min_and_middle), min_and_middle['outstanding'].mean())
 
     # question()
+
+    for i in range(10-1,0-1,-1):
+        print(i)
