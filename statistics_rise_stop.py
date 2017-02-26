@@ -54,9 +54,9 @@ def explore(row_iter):
                      'totals': row['totals'], 'totalAssets': row['totalAssets'] * open_i, 'growth': 0,
                      'weekday': ymd.weekday(), 'month': m, 'day': d}
 
-                mu.acquire()
+                # mu.acquire()
                 rise_stop_df = rise_stop_df.append(d, ignore_index=True)
-                mu.release()
+                # mu.release()
         except Exception as e:
             print(e)
             print(i)
@@ -73,8 +73,11 @@ if __name__ == '__main__':
 
     lst = os.listdir('d:/analyze_data/k/')
     basics = ts.get_stock_basics()
-    tp = ThreadPool()
-    tp.map(explore, basics.iterrows())
+    # tp = ThreadPool()
+    # tp.map(explore, basics.iterrows())
+
+    for row_iter in basics.iterrows():
+        explore(row_iter)
 
     rise_stop_df.to_csv('data/{}_{}.csv'.format(os.path.basename(__file__), today))
 
