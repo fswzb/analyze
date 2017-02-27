@@ -2,7 +2,7 @@
 # print(ts.get_suspended())
 # print(ts.get_terminated())
 from utils import get_stock_basics
-
+import tushare as ts
 
 def question():
     i = 1
@@ -38,5 +38,15 @@ if __name__ == '__main__':
 
     # question()
 
-    for i in range(10-1,0-1,-1):
-        print(i)
+    # for i in range(10-1,0-1,-1):
+    #     print(i)
+
+    hist = ts.get_industry_classified()
+    hist.to_csv('data/list-industry.csv')
+    print(hist)
+    hist = ts.get_concept_classified()
+    hist.to_csv('data/list-concept.csv')
+    print(hist)
+    hist = ts.get_area_classified()
+    hist.to_csv('data/list-area.csv')
+    print(hist)
