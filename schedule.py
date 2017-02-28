@@ -1,4 +1,5 @@
 import datetime
+import sched
 import time
 from enum import Enum
 
@@ -15,6 +16,7 @@ class TradingState(Enum):
 
 
 class Strategy:
+    schedule = sched.scheduler(time.time, time.sleep)
     trading_state = TradingState.closed
     redis_poll = redis.ConnectionPool(host='127.0.0.1', port='6379')
     redis_conn = redis.Redis(connection_pool=redis_poll)
