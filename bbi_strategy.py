@@ -1,17 +1,25 @@
 """BBI大于5小于10；量比大于0.5小于3；换手率大于2%小于7%；按总市值从小到大排列"""
+import json
 import os
 from io import StringIO
 
 import pandas as pd
+
 import tushare as ts
 
 if __name__ == '__main__':
+    ignore_list = json.load(open('ignore_list.json', encoding='utf8'))
+
     # basics = get_stock_basics()
     basics = ts.get_stock_basics()
     hist = ts.get_hist_data('sh')
     poll = pd.DataFrame(columns=['code', 'bbi', '量比', 'turnover', 'totalAssets'])
     date = hist.index[0]
     for index, row in basics.iterrows():
+        if index in ignore_list:
+            print(index)
+            continue
+
         filename = 'd:/analyze_data/k/{}.csv'.format(index)
         if os.path.exists(filename):
             text = open(filename, encoding='GBK').read()
