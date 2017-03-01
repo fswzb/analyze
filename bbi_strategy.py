@@ -6,18 +6,21 @@ from io import StringIO
 import pandas as pd
 
 import tushare as ts
+from utils import get_stock_basics
 
-if __name__ == '__main__':
+
+def get_bbi_match():
     ignore_list = json.load(open('ignore_list.json', encoding='utf8'))
+    ignore_list = []
 
     # basics = get_stock_basics()
-    basics = ts.get_stock_basics()
+    basics = get_stock_basics()
     hist = ts.get_hist_data('sh')
     poll = pd.DataFrame(columns=['code', 'bbi', '量比', 'turnover', 'totalAssets'])
     date = hist.index[0]
     for index, row in basics.iterrows():
         if index in ignore_list:
-            print(index)
+            # print(index)
             continue
 
         filename = 'd:/analyze_data/k/{}.csv'.format(index)
@@ -42,4 +45,10 @@ if __name__ == '__main__':
     poll = poll[poll['bbi'].between(5, 10)]
     poll = poll.sort_values('totalAssets')
 
-    print(poll)
+    # print(poll)
+    if len(poll) > 0:
+        return poll['code'][0]
+
+
+if __name__ == '__main__':
+    print(get_bbi_match())
