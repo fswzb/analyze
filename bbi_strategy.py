@@ -47,7 +47,7 @@ def get_bbi_match():
 
     # print(poll)
     if len(poll) > 0:
-        return poll['code'][0]
+        return poll.iloc[0]['code']
 
 
 if __name__ == '__main__':

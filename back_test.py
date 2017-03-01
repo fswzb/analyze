@@ -2,8 +2,8 @@ import os
 from io import StringIO
 
 import pandas as pd
-
 import tushare as ts
+
 from bbi_strategy import get_bbi_match
 
 
@@ -27,7 +27,7 @@ def explore(date):
         if hist is not None:
             position_list[0]['profit'] = (hist['open'] - position_list[0]['buy_price']) / position_list[0]['buy_price']
 
-            if position_list[0]['days'] >= hold_days:
+            if position_list[0]['days'] >= hold_days and position_list[0]['profit'] < hold:
                 position_list.clear()
                 print('sell')
             if position_list[0]['profit'] > 0:
@@ -48,7 +48,8 @@ def explore(date):
 
             buy_list.clear()
 
-            tick = {'code': code, 'date': date, 'buy_price': df.loc[date]['open'], 'days': 1, 'high': 0, 'profit': 0}
+            tick = {'code': code, 'date': date, 'buy_price': df.loc[date]['open'], 'days': 1,
+                    'high': df.loc[date]['high'], 'profit': 0}
             position_list.append(tick)
             print(tick)
 
@@ -70,7 +71,7 @@ if __name__ == '__main__':
     sh = ts.get_hist_data('sh')
     sh = sh[sh.index >= '2016-02-01']
     sh = sh.iloc[::-1]
-    print(sh)
+    # print(sh)
 
     for date, row in sh.iterrows():
         explore(date)

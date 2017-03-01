@@ -1,16 +1,14 @@
 import datetime
-import json
-import os
 import time
 from enum import Enum
-from io import StringIO
-
-import pandas as pd
-import redis
-from apscheduler.schedulers.blocking import BlockingScheduler
 
 import easytrader
+import pandas as pd
+import redis
 import tushare as ts
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+from bbi_strategy import get_bbi_match
 
 
 class TradingState(Enum):
@@ -58,46 +56,10 @@ class Strategy:
         if len(positions) > 0:  # 持仓中
             return
 
-        ignore_list = json.load(open('ignore_list.json', encoding='utf8'))
+        code = get_bbi_match()
 
-        # basics = get_stock_basics()
-        basics = ts.get_stock_basics()
-        hist = ts.get_hist_data('sh')
-        poll = pd.DataFrame(columns=['code', 'bbi', '量比', 'turnover', 'totalAssets'])
-        date = hist.index[0]
-        for index, row in basics.iterrows():
-            if index in ignore_list:
-                print(index)
-                continue
-
-            filename = 'd:/analyze_data/k/{}.csv'.format(index)
-            if os.path.exists(filename):
-                text = open(filename, encoding='GBK').read()
-                text = text.replace('--', '')
-                df = pd.read_csv(StringIO(text), dtype={'date': 'object'})
-                df = df.set_index('date')
-
-                if df.index[0] == date:
-                    row['bbi'] = (
-                                     df['close'].head(3).mean() + df['close'].head(6).mean() + df['close'].head(
-                                         12).mean() +
-                                     df['close'].head(24).mean()) / 4
-                    row['量比'] = df['volume'][0] / (df['volume'].head(6).tail(5).mean())
-                    row['turnover'] = df['turnover'][0]
-                    poll = poll.append({'code': index, 'bbi': row['bbi'], '量比': row['量比'], 'turnover': row['turnover'],
-                                        'totalAssets': row['totals'] * df['close'][0]}, ignore_index=True)
-
-        # print(poll)
-
-        poll = poll[poll['turnover'].between(2, 7)]
-        poll = poll[poll['量比'].between(0.5, 3)]
-        poll = poll[poll['bbi'].between(5, 10)]
-        poll = poll.sort_values('totalAssets')
-
-        print(poll)
-
-        if len(poll) > 0:
-            self.redis_conn.set('bbi_select', poll['code'][0])  # 存入选中的股票
+        if code is not None:
+            self.redis_conn.set('bbi_select', code)  # 存入选中的股票
 
     def buy(self):
         self.redis_conn.set('bbi', '')
