@@ -15,7 +15,7 @@ def get_bbi_match_2(date):
     if os.path.exists(filename):
         text = open(filename, encoding='GBK').read()
         text = text.replace('--', '')
-        pool = pd.read_csv(StringIO(text), dtype={'date': 'object'})
+        pool = pd.read_csv(StringIO(text), dtype={'code': 'object'})
         pool = pool.set_index('code')
 
         pool = pool[pool['turnover'].between(2, 7)]
@@ -76,9 +76,13 @@ def get_bbi_match(date):
 
 
 if __name__ == '__main__':
-    today = str(datetime.datetime.now().date())
+    t = datetime.datetime.now()
+    today = str(t.date())
 
-    print(get_bbi_match_2(today))
+    print(get_bbi_match_2('2016-01-04'))
 
+    print(get_bbi_match_2(today), datetime.datetime.now() - t)
+
+    t = datetime.datetime.now()
     # print(get_bbi_match('2017-03-17'))
-    print(get_bbi_match(today))
+    print(get_bbi_match(today), datetime.datetime.now() - t)

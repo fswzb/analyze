@@ -5,6 +5,7 @@ from multiprocessing.pool import ThreadPool
 from time import sleep
 
 import tushare as ts
+
 from utils import get_stock_basics
 
 
@@ -18,8 +19,8 @@ class History:
         print('update', index)
 
         try:
-            # hist = ts.get_h_data(index)
-            hist = ts.get_hist_data(index)
+            hist = ts.get_h_data(index, autype='None', start='1990-01-01')
+            # hist = ts.get_hist_data(index)
             if hist is None or len(hist) == 0:
                 return
 
@@ -39,7 +40,7 @@ class History:
 
             # tick数据
             for i, row in hist.iterrows():
-                date = str(i)
+                date = str(i)[:10]
 
                 if date == self.today:
                     continue
@@ -57,7 +58,7 @@ class History:
             # 大单数据，貌似只有近十几个交易日的数据
             hist = hist.head(5)
             for i, row in hist.iterrows():
-                date = str(i)
+                date = str(i)[:10]
 
                 if date == self.today:
                     continue

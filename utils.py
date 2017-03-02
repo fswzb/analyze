@@ -2,9 +2,8 @@ import os
 from multiprocessing.pool import ThreadPool
 
 import pandas as pd
-from pandas.compat import StringIO
-
 import tushare as ts
+from pandas.compat import StringIO
 
 
 def get_settlement(hist):
@@ -45,10 +44,18 @@ def get_hist_data(code, start=None, end=None):
         return ts.get_hist_data(code, start=start, end=end)
 
 
-def get_k_data(code, date, ktype):
+def get_k_data(code='600423', date='2016-01-01', ktype='1'):
     """获取任意分钟K线"""
 
-    df = ts.get_tick_data(code, date=date)
+    filename = 'd:/analyze_data/tick/{}/{}.csv'.format(code, date)
+    if os.path.exists(filename):
+        text = open(filename, encoding='GBK').read()
+        text = text.replace('--', '')
+        df = pd.read_csv(StringIO(text), dtype={'date': 'object'})
+        # df = df.set_index('date')
+    else:
+        df = ts.get_tick_data(code, date=date)
+        df.to_csv(filename)
     # print(df)
 
     try:
