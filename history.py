@@ -9,9 +9,10 @@ from utils import get_stock_basics
 
 
 class History:
-    fail_pool = []
-    mu = threading.Lock()
     today = None
+    fail_pool = None
+    mu = threading.Lock()
+    repull = ['2017-03-02']
 
     def update_tick_and_dd(self, index):
         print('update', index)
@@ -84,11 +85,12 @@ class History:
 
         basics = get_stock_basics()
         index_pool = basics.index
+        self.fail_pool = []
 
         tp = ThreadPool()
         while len(index_pool) > 0:
             tp.map(self.update_tick_and_dd, index_pool)
-            index_pool = fail_pool
+            index_pool = self.fail_pool
             fail_pool = []
             sleep(5)
 

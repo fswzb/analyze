@@ -10,6 +10,7 @@ import easytrader
 import tushare as ts
 from bbi_strategy import get_bbi_match
 from history import History
+from history_day import update_day
 
 
 class TradingState(Enum):
@@ -87,15 +88,17 @@ class Strategy:
         history = History()
 
         sched = BlockingScheduler()
-        sched.add_job(self.reset, 'cron', second='0', day_of_week='0-4', hour='9')
-        sched.add_job(self.buy, 'cron', minute='30', day_of_week='0-4', hour='9')
-        sched.add_job(self.tick, 'cron', second='*/5', day_of_week='0-4', hour='9-12,13-15')
+        sched.add_job(self.reset, 'cron', day_of_week='0-4', hour='9', second='0')
+        sched.add_job(self.buy, 'cron', day_of_week='0-4', hour='9', minute='30')
+        sched.add_job(self.tick, 'cron', day_of_week='0-4', hour='9-12,13-15', second='*/5', )
 
-        sched.add_job(history.start, 'cron', minute='30', day_of_week='0-4', hour='15')
+        sched.add_job(history.start, 'cron', day_of_week='0-4', hour='15', minute='30', )
         sched.add_job(self.select, 'cron', day_of_week='0-4', hour='16')
 
-        sched.add_job(self.buy, 'cron', minute='20', day_of_week='0-4', hour='14')
-        sched.add_job(self.sell, 'cron', minute='20', day_of_week='0-4', hour='14')
+        sched.add_job(self.buy, 'cron', day_of_week='0-4', hour='14', minute='20')
+        sched.add_job(self.sell, 'cron', day_of_week='0-4', hour='14', minute='20')
+
+        sched.add_job(update_day, 'cron', day_of_week='0-4', hour='23', minute='0')
 
         try:
             sched.start()

@@ -1,4 +1,5 @@
 """BBI大于5小于10；量比大于0.5小于3；换手率大于2%小于7%；按总市值从小到大排列"""
+import datetime
 import json
 import os
 import threading
@@ -57,4 +58,6 @@ def get_bbi_match(date):
 
 
 if __name__ == '__main__':
-    print(get_bbi_match('2016-03-17'))
+    today = str(datetime.datetime.now().date())
+    # print(get_bbi_match('2017-03-17'))
+    print(get_bbi_match(today))
