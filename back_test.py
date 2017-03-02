@@ -30,8 +30,9 @@ def explore(date):
             # 时间到换仓
             if len(position_list) > 0:
                 if position_list[0]['days'] >= HOLD_DAYS and position_list[0]['profit'] < HOLD:
+                    position_list[0]['sell_date'] = date
+                    print(position_list[0])
                     position_list.clear()
-                    print('sell')
 
             # 最大回撤、止盈
             if len(position_list) > 0:
@@ -62,7 +63,7 @@ def explore(date):
 
             buy_list.clear()
 
-            tick = {'code': code, 'date': date, 'buy_price': df.loc[date]['open'], 'days': 1,
+            tick = {'code': code, 'buy_date': date, 'buy_price': df.loc[date]['open'], 'days': 1,
                     'high': df.loc[date]['high'], 'profit': 0}
             position_list.append(tick)
             print(tick)
@@ -83,7 +84,7 @@ buy_list = []
 position_list = []
 if __name__ == '__main__':
     sh = ts.get_hist_data('sh')
-    sh = sh[sh.index >= '2016-02-01']
+    sh = sh[sh.index >= '2016-01-01']
     sh = sh.iloc[::-1]
     # print(sh)
 

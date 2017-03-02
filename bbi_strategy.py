@@ -1,6 +1,7 @@
 """BBI大于5小于10；量比大于0.5小于3；换手率大于2%小于7%；按总市值从小到大排列"""
 import json
 import os
+import threading
 from io import StringIO
 
 import pandas as pd
@@ -12,9 +13,11 @@ def get_bbi_match(date):
     ignore_list = json.load(open('ignore_list.json', encoding='utf8'))
     ignore_list = []
 
+    poll = pd.DataFrame(columns=['code', 'bbi', '量比', 'turnover', 'totalAssets'])
+    mu = threading.Lock()
+
     # basics = get_stock_basics()
     basics = get_stock_basics()
-    poll = pd.DataFrame(columns=['code', 'bbi', '量比', 'turnover', 'totalAssets'])
     for index, row in basics.iterrows():
         if index in ignore_list:
             # print(index)
