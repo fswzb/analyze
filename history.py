@@ -19,7 +19,7 @@ class History:
         print('update', index)
 
         try:
-            hist = ts.get_h_data(index, autype='None', start='1990-01-01')
+            hist = ts.get_h_data(index, autype='None', start='2000-01-01')
             # hist = ts.get_hist_data(index)
             if hist is None or len(hist) == 0:
                 return
