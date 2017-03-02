@@ -57,7 +57,8 @@ class Strategy:
         if len(positions) > 0:  # 持仓中
             return
 
-        code = get_bbi_match()
+        now = datetime.datetime.now()
+        code = get_bbi_match(str(now.date()))
 
         if code is not None:
             self.redis_conn.set('bbi_select', code)  # 存入选中的股票

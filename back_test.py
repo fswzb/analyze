@@ -69,7 +69,7 @@ def explore(date):
 
     # 选股
     if len(buy_list) == 0:
-        code = get_bbi_match()
+        code = get_bbi_match(date)
         if code is not None:
             buy_list.append(code)
 
