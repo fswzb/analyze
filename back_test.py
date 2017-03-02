@@ -2,8 +2,8 @@ import os
 from io import StringIO
 
 import pandas as pd
-import tushare as ts
 
+import tushare as ts
 from bbi_strategy import get_bbi_match
 
 
@@ -15,11 +15,11 @@ def get_hist(code, date):
         df = pd.read_csv(StringIO(text), dtype={'date': 'object'})
         df = df.set_index('date')
 
-        return df.loc[date]
+        if date in list(df.index):
+            return df.loc[date]
 
 
 def explore(date):
-    # 止盈
     if len(position_list) > 0:
         position_list[0]['days'] += 1
 
@@ -27,14 +27,28 @@ def explore(date):
         if hist is not None:
             position_list[0]['profit'] = (hist['open'] - position_list[0]['buy_price']) / position_list[0]['buy_price']
 
-            if position_list[0]['days'] >= hold_days and position_list[0]['profit'] < hold:
-                position_list.clear()
-                print('sell')
-            if position_list[0]['profit'] > 0:
-                pass
+            # 时间到换仓
+            if len(position_list) > 0:
+                if position_list[0]['days'] >= HOLD_DAYS and position_list[0]['profit'] < HOLD:
+                    position_list.clear()
+                    print('sell')
 
-    # 止损
-    pass
+            # 最大回撤、止盈
+            if len(position_list) > 0:
+                if position_list[0]['high'] > 0:
+                    pass
+
+            # 止损
+            if len(position_list) > 0:
+                if position_list[0]['profit'] < ZHI_SUN:
+                    pass
+
+            # 收盘，更新最高价
+            if len(position_list) > 0:
+                position_list[0]['profit'] = (hist['close'] - position_list[0]['buy_price']) / position_list[0][
+                    'buy_price']
+                if position_list[0]['profit'] > 0:
+                    position_list[0]['high'] = max(position_list[0]['high'], hist['high'])
 
     # 建仓
     if len(position_list) == 0 and len(buy_list) > 0:
@@ -60,10 +74,10 @@ def explore(date):
             buy_list.append(code)
 
 
-hold_days = 17
-zhi_sun = -.15
-zhi_ying = -.04
-hold = .05
+HOLD_DAYS = 17
+ZHI_SUN = -.15
+ZHI_YING = -.04
+HOLD = .05
 
 buy_list = []
 position_list = []

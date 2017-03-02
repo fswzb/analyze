@@ -2,13 +2,14 @@ import datetime
 import time
 from enum import Enum
 
-import easytrader
 import pandas as pd
 import redis
-import tushare as ts
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+import easytrader
+import tushare as ts
 from bbi_strategy import get_bbi_match
+from history import History
 
 
 class TradingState(Enum):
@@ -82,10 +83,14 @@ class Strategy:
 
     def start(self):
 
+        history = History()
+
         sched = BlockingScheduler()
         sched.add_job(self.reset, 'cron', second='0', day_of_week='0-4', hour='9')
         sched.add_job(self.buy, 'cron', minute='30', day_of_week='0-4', hour='9')
         sched.add_job(self.tick, 'cron', second='*/5', day_of_week='0-4', hour='9-12,13-15')
+
+        sched.add_job(history.start, 'cron', minute='30', day_of_week='0-4', hour='15')
         sched.add_job(self.select, 'cron', day_of_week='0-4', hour='16')
 
         sched.add_job(self.buy, 'cron', minute='20', day_of_week='0-4', hour='14')

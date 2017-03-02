@@ -9,7 +9,7 @@ import tushare as ts
 from utils import get_stock_basics
 
 
-def get_bbi_match():
+def get_bbi_match(date):
     ignore_list = json.load(open('ignore_list.json', encoding='utf8'))
     ignore_list = []
 
@@ -51,4 +51,4 @@ def get_bbi_match():
 
 
 if __name__ == '__main__':
-    print(get_bbi_match())
+    print(get_bbi_match('2017-03-02'))
