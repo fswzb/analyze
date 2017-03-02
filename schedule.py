@@ -8,7 +8,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 import easytrader
 import tushare as ts
-from bbi_strategy import get_bbi_match
+from bbi_strategy import get_bbi_match_2
 from history import History
 from history_day import update_day
 
@@ -59,7 +59,7 @@ class Strategy:
             return
 
         now = datetime.datetime.now()
-        code = get_bbi_match(str(now.date()))
+        code = get_bbi_match_2(str(now.date()))
 
         if code is not None:
             self.redis_conn.set('bbi_select', code)  # 存入选中的股票

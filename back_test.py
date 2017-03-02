@@ -4,7 +4,7 @@ from io import StringIO
 import pandas as pd
 
 import tushare as ts
-from bbi_strategy import get_bbi_match
+from bbi_strategy import get_bbi_match_2
 
 
 def get_hist(code, date):
@@ -70,7 +70,7 @@ def explore(date):
 
     # 选股
     if len(buy_list) == 0:
-        code = get_bbi_match(date)
+        code = get_bbi_match_2(date)
         if code is not None:
             buy_list.append(code)
 

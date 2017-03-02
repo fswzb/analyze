@@ -10,6 +10,24 @@ import pandas as pd
 from utils import get_stock_basics
 
 
+def get_bbi_match_2(date):
+    filename = 'd:/analyze_data/day/{}.csv'.format(date)
+    if os.path.exists(filename):
+        text = open(filename, encoding='GBK').read()
+        text = text.replace('--', '')
+        pool = pd.read_csv(StringIO(text), dtype={'date': 'object'})
+        pool = pool.set_index('code')
+
+        pool = pool[pool['turnover'].between(2, 7)]
+        pool = pool[pool['量比'].between(0.5, 3)]
+        pool = pool[pool['bbi'].between(5, 10)]
+        pool = pool.sort_values('totalAssets')
+
+        # print(pool)
+        if len(pool) > 0:
+            return pool.iloc[0].name
+
+
 def get_bbi_match(date):
     ignore_list = json.load(open('ignore_list.json', encoding='utf8'))
     ignore_list = []
@@ -59,5 +77,8 @@ def get_bbi_match(date):
 
 if __name__ == '__main__':
     today = str(datetime.datetime.now().date())
+
+    print(get_bbi_match_2(today))
+
     # print(get_bbi_match('2017-03-17'))
     print(get_bbi_match(today))
