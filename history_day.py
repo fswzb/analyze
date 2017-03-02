@@ -59,6 +59,7 @@ def update_day():
         os.makedirs(path)
 
     for (k, v) in all_days.items():
+        v = v.set_index('code')
         v.to_csv('{}/{}.csv'.format(path, k))
 
 

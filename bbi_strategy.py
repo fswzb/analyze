@@ -13,7 +13,7 @@ def get_bbi_match(date):
     ignore_list = json.load(open('ignore_list.json', encoding='utf8'))
     ignore_list = []
 
-    poll = pd.DataFrame(columns=['code', 'bbi', '量比', 'turnover', 'totalAssets'])
+    pool = pd.DataFrame(columns=['code', 'bbi', '量比', 'turnover', 'totalAssets'])
     mu = threading.Lock()
 
     # basics = get_stock_basics()
@@ -41,19 +41,19 @@ def get_bbi_match(date):
                               hist['close'].head(24).mean()) / 4
                 row['量比'] = hist['volume'][0] / (hist['volume'].head(6).tail(5).mean())
                 row['turnover'] = hist['turnover'][0]
-                poll = poll.append({'code': index, 'bbi': row['bbi'], '量比': row['量比'], 'turnover': row['turnover'],
+                pool = pool.append({'code': index, 'bbi': row['bbi'], '量比': row['量比'], 'turnover': row['turnover'],
                                     'totalAssets': row['totals'] * hist['close'][0]}, ignore_index=True)
 
-    # print(poll)
+    # print(pool)
 
-    poll = poll[poll['turnover'].between(2, 7)]
-    poll = poll[poll['量比'].between(0.5, 3)]
-    poll = poll[poll['bbi'].between(5, 10)]
-    poll = poll.sort_values('totalAssets')
+    pool = pool[pool['turnover'].between(2, 7)]
+    pool = pool[pool['量比'].between(0.5, 3)]
+    pool = pool[pool['bbi'].between(5, 10)]
+    pool = pool.sort_values('totalAssets')
 
-    # print(poll)
-    if len(poll) > 0:
-        return poll.iloc[0]['code']
+    # print(pool)
+    if len(pool) > 0:
+        return pool.iloc[0]['code']
 
 
 if __name__ == '__main__':
