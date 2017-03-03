@@ -38,6 +38,7 @@ class Strategy:
 
     def tick(self):
         dt = datetime.datetime.now()
+        print(dt)
         today = str(dt.date())
         trade_cal = ts.trade_cal()
         trade_cal['calendarDate'] = pd.to_datetime(trade_cal['calendarDate'])
@@ -90,9 +91,15 @@ class Strategy:
         sched = BlockingScheduler()
         sched.add_job(self.reset, 'cron', day_of_week='0-4', hour='9', second='0')
         sched.add_job(self.buy, 'cron', day_of_week='0-4', hour='9', minute='30')
-        sched.add_job(self.tick, 'cron', day_of_week='0-4', hour='9-12,13-15', second='*/5', )
 
-        sched.add_job(history.start, 'cron', day_of_week='0-4', hour='15', minute='30', )
+        # 半点 9:30:00~9:59:59
+        sched.add_job(self.tick, 'cron', day_of_week='0-4', hour='9', minute='30-59', second='*/5')
+        # 半点 11:00:00~11:30:59
+        sched.add_job(self.tick, 'cron', day_of_week='0-4', hour='11', minute='0-30', second='*/5')
+        # 整点 10:00:00~10:59:59 13:00:00~14:59:59
+        sched.add_job(self.tick, 'cron', day_of_week='0-4', hour='10,13-14', second='*/5')
+
+        sched.add_job(history.update, 'cron', day_of_week='0-4', hour='15', minute='30')
         sched.add_job(self.select, 'cron', day_of_week='0-4', hour='16')
 
         sched.add_job(self.buy, 'cron', day_of_week='0-4', hour='14', minute='20')

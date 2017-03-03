@@ -77,7 +77,7 @@ class History:
             print(e)
             print('{} fail, put into fail pool'.format(index))
 
-    def start(self):
+    def update(self):
         t = datetime.datetime.now()
 
         today = str(t.date())
@@ -99,4 +99,4 @@ class History:
 
 
 if __name__ == '__main__':
-    History().start()
+    History().update()
