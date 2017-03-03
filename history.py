@@ -15,11 +15,16 @@ class History:
     mu = threading.Lock()
     repull = ['2017-03-02']
 
-    def update_tick_and_dd(self, index):
+    def update_tick_and_dd(self, iterrow):
+        index = iterrow[0]
+        row = iterrow[1]
         print('update', index)
 
         try:
-            hist = ts.get_h_data(index, autype='None', start='2000-01-01')
+            time_to_market = str(row['timeToMarket'])
+            start = '{}-{}-{}'.format(time_to_market[0:4], time_to_market[4:6], time_to_market[6:8])
+            print(start)
+            hist = ts.get_h_data(index, autype='None', start=start)
             # hist = ts.get_hist_data(index)
             if hist is None or len(hist) == 0:
                 return
@@ -71,7 +76,7 @@ class History:
                         dd.to_csv(filename)
         except Exception as e:
             self.mu.acquire()
-            self.fail_pool.append(index)
+            self.fail_pool.append(iterrow)
             self.mu.release()
 
             print(e)
@@ -85,14 +90,14 @@ class History:
         # redis_pool = redis.ConnectionPool(host='127.0.0.1', port='6379')
 
         basics = get_stock_basics()
-        index_pool = basics.index
+        index_pool = list(basics.iterrows())
         self.fail_pool = []
 
         tp = ThreadPool()
         while len(index_pool) > 0:
             tp.map(self.update_tick_and_dd, index_pool)
             index_pool = self.fail_pool
-            fail_pool = []
+            self.fail_pool = []
             sleep(5)
 
         print(datetime.datetime.now() - t)
