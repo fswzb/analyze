@@ -89,7 +89,7 @@ def explore(date):
                     position_list[0]['high'] = max(position_list[0]['high'], hist['high'])
 
     # 建仓
-    if len(position_list) == 0 and len(buy_list) > 0 and sold == False:
+    if len(position_list) == 0 and len(buy_list) > 0 and not sold:
         code = buy_list[0]
         filename = 'd:/analyze_data/k/{}.csv'.format(code)
         if os.path.exists(filename):
@@ -141,6 +141,8 @@ if __name__ == '__main__':
     sh = ts.trade_cal()
     sh['calendarDate'] = pd.to_datetime(sh['calendarDate'])
     sh = sh.set_index('calendarDate')
+    sh = sh[sh.index >= '2016-01-01']
+
 
     for date, row in sh.iterrows():
         date = str(date)[:10]
